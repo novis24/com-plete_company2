@@ -45,9 +45,18 @@ function markMessagesAsRead(chatListItem) {
         console.error("Chat list item not found, cannot mark messages as read.");
         return;
     }
+    
+    // Immediately remove the unread marker to provide instant feedback
+    const unreadMarker = chatListItem.querySelector('.unread-marker');
+    if (unreadMarker) {
+        unreadMarker.remove();
+    }
+
     const room_id = chatListItem.dataset.room;
     const is_private = chatListItem.dataset.type === 'private';
     const csrfToken = getCookie('csrftoken');
+    
+    // Now send the request to the backend to update the database
     fetch('/mark_messages_as_read/', {
         method: 'POST',
         headers: {
@@ -58,12 +67,8 @@ function markMessagesAsRead(chatListItem) {
     })
     .then(response => response.json())
     .then(data => {
-        if (data.success) {
-            const unreadMarker = chatListItem.querySelector('.unread-marker');
-            if (unreadMarker) {
-                unreadMarker.textContent = '0';
-                unreadMarker.style.display = 'none';
-            }
+        if (!data.success) {
+            console.error('Failed to mark messages as read on the server.');
         }
     })
     .catch(error => console.error('Error marking messages as read:', error));
@@ -201,6 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const chatType = item.dataset.type;
             
             connectToRoom(chatType, roomName);
+            // This will now update the UI immediately
             markMessagesAsRead(item);
 
             fetch(`/get_messages/${chatType}/${roomName}/`)
