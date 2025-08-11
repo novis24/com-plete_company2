@@ -1,0 +1,71 @@
+{%load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>chat (side bar)</title>
+    <link rel="stylesheet" href="{% static 'css/side_bar.css' %}">
+    <link rel="stylesheet" href="{% static 'a_rtchat/css/chat_area.css'%}">
+    <link rel="stylesheet" href="{% static 'a_rtchat/css/createchat.css'%}">
+    <link rel="stylesheet" href="{% static 'a_rtchat/css/filterfunctionality.css'%}">
+    <link rel="stylesheet" href="{% static 'a_rtchat/css/unreadmarkers.css'%}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div class="app-container">
+    <aside class="main-sidebar collapsed" id="mainSidebar">
+    <div class="sidebar-toggle" id="sidebarToggle">
+        <i class="fas fa-bars"></i>
+    </div>
+    <ul class="main-nav">
+        <li class="nav-item">
+            <a href="#" class="nav-link" data-content-target="chat-app">
+                <i class="fas fa-comment-dots"></i>
+                <span class="nav-text">Chats</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link" data-content-target="hr-content">
+                <i class="fas fa-users"></i>
+                <span class="nav-text">HR</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link" data-content-target="finance-content">
+                <i class="fas fa-dollar-sign"></i>
+                <span class="nav-text">Finance</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link" data-content-target="it-content">
+                <i class="fas fa-laptop-code"></i>
+                <span class="nav-text">IT</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link" data-content-target="settings-content">
+                <i class="fas fa-cog"></i>
+                <span class="nav-text">Settings</span>
+            </a>
+        </li>
+    </ul>
+    <div class="logout-section">
+        <a href="#" class="nav-link">
+            <i class="fas fa-sign-out-alt"></i>
+            <span class="nav-text">Logout</span>
+        </a>
+    </div>
+</aside>
+{% block content %}
+
+{% endblock %}
+</div>
+<script src="{% static 'js/side_bar.js' %}" defer ></script>
+<script src="{% static 'a_rtchat/js/chat_area.js' %}" defer ></script>
+<script src="{% static 'a_rtchat/js/send_button.js' %}" defer ></script>
+<script src="{% static 'a_rtchat/js/filterfunctionality.js' %}" defer ></script>
+<script src="{% static 'a_rtchat/js/read_unreadmarker.js' %}" defer ></script>
+<script src="{% static 'a_rtchat/js/createchat.js' %}" defer ></script>
+</body>
+</html>
