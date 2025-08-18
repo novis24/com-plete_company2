@@ -15,6 +15,7 @@ SECRET_KEY = 'django-insecure-nby^&+s^@^!l^1di#&4z&9+y_5&s#qu)7$d9w9sw2w&=5f^=%^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+<<<<<<< HEAD
 ALLOWED_HOSTS = [
     '127.0.0.1',
     '10.6.68.30',
@@ -25,6 +26,12 @@ ALLOWED_HOSTS = [
 INSTALLED_APPS = [
     'jazzmin',
     'daphne',
+=======
+ALLOWED_HOSTS = []
+
+# Application definition
+INSTALLED_APPS = [
+>>>>>>> origin/master
     'channels',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -33,6 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'a_rtchat.apps.ARtchatConfig',
+<<<<<<< HEAD
+=======
+    'daphne', # Add daphne to installed apps
+>>>>>>> origin/master
 ]
 
 MIDDLEWARE = [
@@ -81,7 +92,11 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'kampuni_db',
         'USER': 'postgres',
+<<<<<<< HEAD
         'PASSWORD': 'admin',
+=======
+        'PASSWORD': 'novineem',
+>>>>>>> origin/master
         'HOST': 'localhost',
         'PORT': '5432',
     }
@@ -123,6 +138,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
+<<<<<<< HEAD
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
@@ -299,3 +315,6 @@ JAZZMIN_UI_TWEAKS = {
         "success": "btn-success"
     }
 }
+=======
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+>>>>>>> origin/master

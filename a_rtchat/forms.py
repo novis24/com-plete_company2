@@ -1,8 +1,11 @@
 from django import forms
 from django.core.validators import MinLengthValidator
+<<<<<<< HEAD
 from django.contrib.auth.forms import AuthenticationForm
 
 
+=======
+>>>>>>> origin/master
 
 class ChatMessageForm(forms.Form):
     message = forms.CharField(
@@ -22,6 +25,7 @@ class ChatMessageForm(forms.Form):
             'min_length': 'Message is too short',
             'max_length': 'Message is too long (max 1000 characters)'
         }
+<<<<<<< HEAD
     )
 
 class UserLoginForm(AuthenticationForm):
@@ -31,3 +35,6 @@ class UserLoginForm(AuthenticationForm):
     password = forms.CharField(
         widget=forms.PasswordInput(attrs={'placeholder': 'Enter your password', 'class': 'form-control'})
     )
+=======
+    )
+>>>>>>> origin/master
