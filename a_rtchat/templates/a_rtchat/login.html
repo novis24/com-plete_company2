@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WELCOME TO UTEL GLOBAL</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #e5e7eb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .login-container {
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+            border-radius: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            max-width: 1200px;
+            width: 90%;
+            margin: 20px auto;
+        }
+
+        .form-section {
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: linear-gradient(135deg, #fefce8 0%, #fffbeb 100%);
+        }
+
+        .form-section h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #4a4a4a;
+            font-weight: 500;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 15px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            background-color: #f7f7f7;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #a78bfa;
+            background-color: #fff;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            background: linear-gradient(90deg, #fde047 0%, #fbbf24 100%);
+            color: #333;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 15px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(251, 191, 36, 0.4);
+        }
+
+        .image-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #818cf8;
+            position: relative;
+            text-align: center;
+            color: #eef2ff;
+            font-weight: 500;
+            font-size: 1.2rem;
+            min-height: 150px;
+        }
+        
+        @media (min-width: 992px) {
+            .login-container {
+                flex-direction: row;
+                width: 90%;
+            }
+            .form-section {
+                flex: 1;
+                padding: 60px;
+            }
+            .form-section h2 {
+                font-size: 2.5rem;
+                margin-bottom: 40px;
+            }
+            .input-group {
+                margin-bottom: 25px;
+            }
+            .input-group input {
+                padding: 15px 20px;
+            }
+            .login-btn {
+                padding: 15px;
+                font-size: 1.1rem;
+                margin-top: 20px;
+            }
+            .image-section {
+                flex: 1;
+                min-height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="image-section">
+            <span class="placeholder-text">Image Placeholder</span>
+        </div>
+
+        <div class="form-section">
+            <h2>UTEL GLOBAL</h2>
+            
+             <form method="post">
+                {% csrf_token %}
+
+                <!-- Show non-field errors -->
+                {% if form.non_field_errors %}
+                    <div class="error-message">
+                        {% for error in form.non_field_errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="input-group">
+                    {{ form.username.label_tag }}
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                        <div class="error-message">
+                            {% for error in form.username.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="input-group">
+                    {{ form.password.label_tag }}
+                    {{ form.password }}
+                    {% if form.password.errors %}
+                        <div class="error-message">
+                            {% for error in form.password.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="login-btn">Log In</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
