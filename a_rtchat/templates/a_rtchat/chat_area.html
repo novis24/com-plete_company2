@@ -12,12 +12,13 @@
                 <h3>System Chats</h3>
                 <div class="header-icons">
                     <span class="icon-with-tooltip">
-                        <i class="fas fa-pen-to-square" id="createNewChat"></i>
+                        <img src="{% static 'images/edit.png' %}" alt="chat icon" class="nav-icon" id="createNewChat">
                         <span class="tooltip-text">Create a new chat</span>
                     </span>
                     <div class="filter-dropdown-container">
-                        <i class="fas fa-filter" id="filterChats"></i>
+                         <img src="{% static 'images/sliders.png' %}" alt="chat icon" class="nav-icon">
                         <div class="dropdown-content" id="filterDropdown">
+
                             <a href="{% url 'a_rtchat:filter_chats' 'all' %}" class="filter-option" data-filter="all">All Chats</a>
                             <a href="{% url 'a_rtchat:filter_chats' 'unread' %}" class="filter-option" data-filter="unread">Unread</a>
                             <a href="{% url 'a_rtchat:filter_chats' 'private' %}" class="filter-option" data-filter="private">Contacts</a>
@@ -36,7 +37,7 @@
         {% for chat in all_chats %}
             {% if chat.chat_type == 'group' %}
                 <li class="contact-item group-chat" data-type="group" data-room="{{ chat.id }}">
-                    <div class="contact-avatar"></div>
+                    <img src="{% static 'images/user.png' %}" alt="chat icon" class="nav-icon">
                     <div class="contact-info">
                         <span class="contact-name">{{ chat.name }}</span>
                         <span class="last-message">
@@ -56,9 +57,15 @@
                 </li>
             {% elif chat.chat_type == 'private' %}
                 <li class="contact-item private-chat" data-type="private" data-room="{{ chat.id }}">
-                    <div class="contact-avatar"></div>
+                    <img src="{% static 'images/user.png' %}" alt="chat icon" class="nav-icon">
                     <div class="contact-info">
-                        <span class="contact-name">{{ chat.other_user.get_full_name|default:chat.other_user.username }}</span>
+                        <span class="contact-name">
+                            {% if chat.other_user %}
+                                {{ chat.other_user.get_full_name|default:chat.other_user.username }}
+                            {% else %}
+                                Unknown User
+                            {% endif %}
+                        </span>
                         <span class="last-message">
                             {% if chat.last_message %}
                                 {{ chat.last_message.message|truncatechars:30 }}
@@ -77,14 +84,15 @@
             {% endif %}
         {% endfor %}
     </div>
-    <!-- MAIN CHAT AREA (remains unchanged) -->
+
+    <!-- MAIN CHAT AREA -->
     <div class="chat-main" id="chatBody">
         <div class="chat-header">
             <div class="header-info">
                 <button class="show-chat-list-btn" id="showChatListBtn">
                     <i class="fas fa-arrow-left"></i>
                 </button>
-                <div class="contact-avatar header-avatar"></div>
+                 <img src="{% static 'images/user.png' %}" alt="chat icon" class="nav-icon">
                 <span class="contact-name">
                     {% if chat_type == "group" %}
                         {{ active_group.name }}
@@ -96,7 +104,7 @@
                 </span>
             </div>
             <div class="header-actions">
-                <i class="fas fa-search chat-search-icon" id="chatSearchToggle"></i>
+                <!-- <i class="fas fa-search chat-search-icon" id="chatSearchToggle"></i> -->
             </div>
         </div>
 
@@ -119,148 +127,11 @@
                 </p>
             {% endif %}
         </div>
+
         <div class="chat-input-area">
-            <input type="text" id="messageInput" placeholder="Type a message..." autocomplete="off">
+            <input type="text" id="messageInput" class="message-input" placeholder="Type a message..." autocomplete="off">
             <button type="button" id="sendButton" class="send-button">
-                <i class="fas fa-paper-plane"></i>
-            </button>
-        </div>
-    </div>
-</div>
-
-</main>
-{% endblock %}
-{% extends 'base.html' %}
-{% load static %}
-{% block content %}
-
-<main class="main-content">
-<div class="chat-container" id="chatAppContent" data-username="{{ request.user.username }}">
-
-    <!-- LEFT CHAT LIST -->
-    <div class="system-chats-list" id="chatList">
-        <div class="list-header">
-            <div class="list-header-top">
-                <h3>System Chats</h3>
-                <div class="header-icons">
-                    <span class="icon-with-tooltip">
-                        <i class="fas fa-pen-to-square" id="createNewChat"></i>
-                        <span class="tooltip-text">Create a new chat</span>
-                    </span>
-                    <div class="filter-dropdown-container">
-                        <i class="fas fa-filter" id="filterChats"></i>
-                        <div class="dropdown-content" id="filterDropdown">
-                            <a href="{% url 'a_rtchat:filter_chats' 'all' %}" class="filter-option" data-filter="all">All Chats</a>
-                            <a href="{% url 'a_rtchat:filter_chats' 'unread' %}" class="filter-option" data-filter="unread">Unread</a>
-                            <a href="{% url 'a_rtchat:filter_chats' 'private' %}" class="filter-option" data-filter="private">Contacts</a>
-                            <a href="{% url 'a_rtchat:filter_chats' 'group' %}" class="filter-option" data-filter="group">Groups</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="search-input-wrapper">
-                <i class="fas fa-search search-icon"></i>
-                <input type="text" placeholder="Search chats..." class="list-search-input">
-                <i class="fas fa-times-circle clear-search-icon" style="display: none;"></i>
-            </div>
-        </div>
-        <!-- Looping over the single, combined list of all chats -->
-        {% for chat in all_chats %}
-    {% if chat.chat_type == 'group' %}
-        <li class="contact-item group-chat" data-type="group" data-room="{{ chat.id }}">
-            <div class="contact-avatar"></div>
-            <div class="contact-info">
-                <span class="contact-name">{{ chat.name }}</span>
-                <span class="last-message">
-                    {% if chat.last_message %}
-                        {{ chat.last_message.message|truncatechars:30 }}
-                    {% endif %}
-                </span>
-            </div>
-            <span class="message-time">
-                {% if chat.last_message %}
-                    {{ chat.last_message.timestamp|date:"H:i" }}
-                {% endif %}
-            </span>
-            {% if chat.unread_count > 0 %}
-                <span class="unread-marker">{{ chat.unread_count }}</span>
-            {% endif %}
-        </li>
-    {% elif chat.chat_type == 'private' %}
-        <li class="contact-item private-chat" data-type="private" data-room="{{ chat.id }}">
-            <div class="contact-avatar"></div>
-            <div class="contact-info">
-                <span class="contact-name">
-                    {% if chat.other_user %}
-                        {{ chat.other_user.get_full_name|default:chat.other_user.username }}
-                    {% else %}
-                        Unknown User
-                    {% endif %}
-                </span>
-                <span class="last-message">
-                    {% if chat.last_message %}
-                        {{ chat.last_message.message|truncatechars:30 }}
-                    {% endif %}
-                </span>
-            </div>
-            <span class="message-time">
-                {% if chat.last_message %}
-                    {{ chat.last_message.timestamp|date:"H:i" }}
-                {% endif %}
-            </span>
-            {% if chat.unread_count > 0 %}
-                <span class="unread-marker">{{ chat.unread_count }}</span>
-            {% endif %}
-        </li>
-    {% endif %}
-{% endfor %}            
-    </div>
-    <!-- MAIN CHAT AREA (remains unchanged) -->
-    <div class="chat-main" id="chatBody">
-        <div class="chat-header">
-            <div class="header-info">
-                <button class="show-chat-list-btn" id="showChatListBtn">
-                    <i class="fas fa-arrow-left"></i>
-                </button>
-                <div class="contact-avatar header-avatar"></div>
-                <span class="contact-name">
-                    {% if chat_type == "group" %}
-                        {{ active_group.name }}
-                    {% elif chat_type == "private" %}
-                        {{ other_username }}
-                    {% else %}
-                        Start a chat
-                    {% endif %}
-                </span>
-            </div>
-            <div class="header-actions">
-                <i class="fas fa-search chat-search-icon" id="chatSearchToggle"></i>
-            </div>
-        </div>
-
-        <div class="chat-search-overlay" id="chatSearchOverlay" style="display:none;">
-            <input type="text" placeholder="Search within chat..." class="chat-search-input">
-            <i class="fas fa-times-circle close-chat-search" id="closeChatSearch"></i>
-        </div>
-
-        <div class="chat-messages" id="chatMessages" data-room="{{ room_name }}">
-            {% if messages %}
-                {% for msg in messages %}
-                    <div class="message {% if msg.sender == request.user %}sent{% else %}received{% endif %}">
-                        <strong>{{ msg.sender.username }}:</strong> {{ msg.message }}
-                        <div class="timestamp">{{ msg.timestamp|date:"H:i" }}</div>
-                    </div>
-                {% endfor %}
-            {% else %}
-                <p style="text-align:center;color:#888;margin-top:20px;">
-                    {% if room_name %}No messages in this chat yet{% else %}Select a chat to view messages{% endif %}
-                </p>
-            {% endif %}
-        </div>
-        <div class="chat-input-area">
-            <input type="text" id="messageInput" placeholder="Type a message..." autocomplete="off">
-            <button type="button" id="sendButton" class="send-button">
-                <i class="fas fa-paper-plane"></i>
+                <img src="{% static 'images/paper.png' %}" alt="chat icon" class="nav-icon">
             </button>
         </div>
     </div>

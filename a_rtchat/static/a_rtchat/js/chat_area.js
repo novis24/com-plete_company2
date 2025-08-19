@@ -280,7 +280,6 @@ document.addEventListener('DOMContentLoaded', () => {
         searchInput.dispatchEvent(new Event('input'));
     });
 });
-<<<<<<< HEAD
 
 // New Chat Creation Functionality
 document.addEventListener('DOMContentLoaded', () => {
@@ -540,16 +539,3 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-
-
-
-
-
-
-
-
-
-
-
-=======
->>>>>>> origin/master

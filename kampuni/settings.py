@@ -15,23 +15,18 @@ SECRET_KEY = 'django-insecure-nby^&+s^@^!l^1di#&4z&9+y_5&s#qu)7$d9w9sw2w&=5f^=%^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-<<<<<<< HEAD
+
 ALLOWED_HOSTS = [
     '127.0.0.1',
     '10.6.68.30',
     # '192.168.1.58',
 ]
 
-# Application definition
-INSTALLED_APPS = [
-    'jazzmin',
-    'daphne',
-=======
-ALLOWED_HOSTS = []
 
 # Application definition
 INSTALLED_APPS = [
->>>>>>> origin/master
+    'daphne',
+    'jazzmin',
     'channels',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -40,10 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'a_rtchat.apps.ARtchatConfig',
-<<<<<<< HEAD
-=======
-    'daphne', # Add daphne to installed apps
->>>>>>> origin/master
+     
 ]
 
 MIDDLEWARE = [
@@ -92,11 +84,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'kampuni_db',
         'USER': 'postgres',
-<<<<<<< HEAD
         'PASSWORD': 'admin',
-=======
-        'PASSWORD': 'novineem',
->>>>>>> origin/master
         'HOST': 'localhost',
         'PORT': '5432',
     }
@@ -138,7 +126,6 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
-<<<<<<< HEAD
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
@@ -265,28 +252,13 @@ JAZZMIN_SETTINGS = {
     # Whether to link font from fonts.googleapis.com (use custom_css to supply font otherwise)
     "use_google_fonts_cdn": True,
     # Whether to show the UI customizer on the sidebar
-    "show_ui_builder": True,
+    "show_ui_builder": False,
 
-    ###############
-    # # Change view #
-    # ###############
-    # # Render out the change view as a single form, or in tabs, current options are
-    # # - single
-    # # - horizontal_tabs (default)
-    # # - vertical_tabs
-    # # - collapsible
-    # # - carousel
-    # "changeform_format": "horizontal_tabs",
-    # # override change forms on a per modeladmin basis
-    # "changeform_format_overrides": {"auth.user": "collapsible", "auth.group": "vertical_tabs"},
-    # # Add a language dropdown into the admin
-    # "language_chooser": True,
 }
-
 
 JAZZMIN_UI_TWEAKS = {
     "navbar_small_text": False,
-    "footer_small_text": False,
+    "footer_small_text": True,
     "body_small_text": True,
     "brand_small_text": False,
     "brand_colour": False,
@@ -304,8 +276,8 @@ JAZZMIN_UI_TWEAKS = {
     "sidebar_nav_compact_style": True,
     "sidebar_nav_legacy_style": False,
     "sidebar_nav_flat_style": True,
-    "theme": "lumen",
-    "dark_mode_theme": "darkly",
+    "theme": "litera",
+    "dark_mode_theme": "slate",
     "button_classes": {
         "primary": "btn-primary",
         "secondary": "btn-secondary",
@@ -315,6 +287,7 @@ JAZZMIN_UI_TWEAKS = {
         "success": "btn-success"
     }
 }
-=======
+
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
->>>>>>> origin/master
+

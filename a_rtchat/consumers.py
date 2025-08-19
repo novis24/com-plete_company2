@@ -2,7 +2,7 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.contrib.auth.models import User
-from .models import Message, Group, PrivateChat
+from .models import Message, GroupChat, PrivateChat
 from django.utils import timezone # Import timezone for formatting
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -82,14 +82,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 )
                 return new_message
             elif room_type == 'group':
-                chat = Group.objects.get(id=room_id)
+                chat = GroupChat.objects.get(id=room_id)
                 new_message = Message.objects.create(
                     sender=sender,
                     message=message,
                     group=chat
                 )
                 return new_message
-        except (PrivateChat.DoesNotExist, Group.DoesNotExist) as e:
+        except (PrivateChat.DoesNotExist, GroupChat.DoesNotExist) as e:
             print(f"Error saving message: Chat room does not exist. Error: {e}")
             return None
         except Exception as e:
