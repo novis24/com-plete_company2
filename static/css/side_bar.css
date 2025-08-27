@@ -88,7 +88,7 @@ body {
 }
 
 .main-sidebar.collapsed {
-    width: 70px;
+    width: 65px;
 }
 
 .main-sidebar:not(.collapsed) {

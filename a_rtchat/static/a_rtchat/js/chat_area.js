@@ -353,11 +353,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     data.users.forEach(user => {
                         const userElement = document.createElement('div');
                         userElement.className = 'user-result';
-                        userElement.textContent = user.username;
+                        userElement.textContent =  `${user.first_name} ${user.middle_name || ''} ${user.last_name}`.trim();
                         userElement.dataset.userId = user.id;
                         userElement.addEventListener('click', () => {
                             selectedUserForPrivateChat = user;
-                            userSearchInput.value = user.username;
+                           userSearchInput.value = `${user.first_name} ${user.middle_name || ''} ${user.last_name}`.trim();
                             userSearchResults.style.display = 'none';
                         });
                         userSearchResults.appendChild(userElement);
@@ -430,11 +430,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         
                         const userElement = document.createElement('div');
                         userElement.className = 'user-result';
-                        userElement.textContent = user.username;
+                        userElement.textContent =  `${user.first_name} ${user.middle_name || ''} ${user.last_name}`.trim();
                         userElement.dataset.userId = user.id;
                         userElement.addEventListener('click', () => {
                             addMemberToGroup(user);
-                            groupMemberSearch.value = '';
+                            groupMemberSearch.value =  `${user.first_name} ${user.middle_name || ''} ${user.last_name}`.trim();
                             groupMemberResults.style.display = 'none';
                         });
                         groupMemberResults.appendChild(userElement);

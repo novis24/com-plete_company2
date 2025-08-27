@@ -10,6 +10,9 @@ from django.contrib.auth import authenticate, login, logout
 import json
 from a_rtchat.forms import UserLoginForm
 from .models import Message, GroupChat, PrivateChat
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 # ---------------- Login / Logout ----------------
 
@@ -260,8 +263,9 @@ def search_users(request):
     users = User.objects.filter(
         Q(username__icontains=query) |
         Q(first_name__icontains=query) |
+        Q(middle_name__icontains=query) |
         Q(last_name__icontains=query)
-    ).exclude(id=request.user.id).values('id', 'username')[:10]
+    ).exclude(id=request.user.id).values('id', 'first_name','middle_name','last_name')[:10]
 
     return JsonResponse({'users': list(users)})
 
@@ -272,6 +276,11 @@ def search_users(request):
 @csrf_exempt
 @require_POST
 def create_private_chat(request):
+    if not (request.user.is_superuser or request.user.is_staff):
+            return JsonResponse(
+                {'success': False, 'error': 'You do not have permission to create a new chat.'},
+                status=403
+            )
     try:
         data = json.loads(request.body)
         user_id = data.get('user_id')
@@ -298,6 +307,11 @@ def create_private_chat(request):
 @csrf_exempt
 @require_POST
 def create_group_chat(request):
+    if not (request.user.is_superuser or request.user.is_staff):
+            return JsonResponse(
+                {'success': False, 'error': 'You do not have permission to create a group chat.'},
+                status=403
+            )
     try:
         data = json.loads(request.body)
         name = data.get('name')

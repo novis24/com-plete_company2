@@ -1,22 +1,20 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-
 <main class="main-content">
 <div class="chat-container" id="chatAppContent" data-username="{{ request.user.username }}">
-
     <!-- LEFT CHAT LIST -->
     <div class="system-chats-list" id="chatList">
         <div class="list-header">
             <div class="list-header-top">
-                <h3>System Chats</h3>
+                <h3>Chats</h3>
                 <div class="header-icons">
                     <span class="icon-with-tooltip">
-                        <img src="{% static 'images/edit.png' %}" alt="chat icon" class="nav-icon" id="createNewChat">
+                        <img src="{% static 'images/edit.png' %}" alt="chat icon" class="nav-icon-3" id="createNewChat">
                         <span class="tooltip-text">Create a new chat</span>
                     </span>
                     <div class="filter-dropdown-container">
-                         <img src="{% static 'images/sliders.png' %}" alt="chat icon" class="nav-icon">
+                         <img src="{% static 'images/sliders.png' %}" alt="chat icon" class="nav-icon-2">
                         <div class="dropdown-content" id="filterDropdown">
 
                             <a href="{% url 'a_rtchat:filter_chats' 'all' %}" class="filter-option" data-filter="all">All Chats</a>
@@ -60,11 +58,11 @@
                     <img src="{% static 'images/user.png' %}" alt="chat icon" class="nav-icon">
                     <div class="contact-info">
                         <span class="contact-name">
-                            {% if chat.other_user %}
-                                {{ chat.other_user.get_full_name|default:chat.other_user.username }}
-                            {% else %}
-                                Unknown User
-                            {% endif %}
+                                {% if chat.other_user.first_name or chat.other_user.last_name %}
+                                    {{ chat.other_user.first_name |title }} {{ chat.other_user.last_name | title }}
+                                {% else %}
+                                    {{ chat.other_user.username }}
+                                {% endif %}
                         </span>
                         <span class="last-message">
                             {% if chat.last_message %}

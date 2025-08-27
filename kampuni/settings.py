@@ -19,6 +19,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     '127.0.0.1',
     '10.6.68.30',
+    '10.6.66.30',
     # '192.168.1.58',
 ]
 
@@ -26,6 +27,8 @@ ALLOWED_HOSTS = [
 # Application definition
 INSTALLED_APPS = [
     'daphne',
+
+    
     'jazzmin',
     'channels',
     'django.contrib.admin',
@@ -82,13 +85,15 @@ CHANNEL_LAYERS = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'kampuni_db',
+        'NAME': 'kampuni',
         'USER': 'postgres',
         'PASSWORD': 'admin',
         'HOST': 'localhost',
         'PORT': '5432',
     }
 }
+
+AUTH_USER_MODEL = 'a_rtchat.CustomUser'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

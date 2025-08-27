@@ -666,3 +666,22 @@ body {
     ----------------------------------------
 */
 
+.nav-icon-2 {
+    width: 23px;            /* Match Font Awesome icon size */
+    height: 23px;
+    display: inline-block;  /* Treat as inline element for alignment with text */
+    vertical-align: middle; /* Align vertically with nav text */
+    margin-right: 10px;     /* Space between icon and text */
+    
+  
+}
+
+.nav-icon-3 {
+    width: 24px;            /* Match Font Awesome icon size */
+    height: 24px;
+    display: inline-block;  /* Treat as inline element for alignment with text */
+    vertical-align: middle; /* Align vertically with nav text */
+    margin-right: 10px;     /* Space between icon and text */
+    
+  
+}
