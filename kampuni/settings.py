@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'a_rtchat.apps.ARtchatConfig',
      
 ]
+## error handler
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -85,7 +87,7 @@ CHANNEL_LAYERS = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'kampuni',
+        'NAME': 'utelcentre1',
         'USER': 'postgres',
         'PASSWORD': 'admin',
         'HOST': 'localhost',
@@ -171,6 +173,10 @@ JAZZMIN_SETTINGS = {
 
     # Field name on user model that contains avatar ImageField/URLField/Charfield or a callable that receives the user
     "user_avatar": None,
+
+    # to show looged on userr
+     "user_display": "get_username",
+
 
     ############
     # Top Menu #

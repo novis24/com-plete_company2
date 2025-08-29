@@ -2,7 +2,8 @@
 {% load static %}
 {% block content %}
 <main class="main-content">
-<div class="chat-container" id="chatAppContent" data-username="{{ request.user.username }}">
+<div class="chat-container" id="chatAppContent" data-userid="{{ request.user.userid }}" data-username="{{ request.user.username }}">
+
     <!-- LEFT CHAT LIST -->
     <div class="system-chats-list" id="chatList">
         <div class="list-header">
@@ -16,7 +17,6 @@
                     <div class="filter-dropdown-container">
                          <img src="{% static 'images/sliders.png' %}" alt="chat icon" class="nav-icon-2">
                         <div class="dropdown-content" id="filterDropdown">
-
                             <a href="{% url 'a_rtchat:filter_chats' 'all' %}" class="filter-option" data-filter="all">All Chats</a>
                             <a href="{% url 'a_rtchat:filter_chats' 'unread' %}" class="filter-option" data-filter="unread">Unread</a>
                             <a href="{% url 'a_rtchat:filter_chats' 'private' %}" class="filter-option" data-filter="private">Contacts</a>
@@ -114,8 +114,19 @@
         <div class="chat-messages" id="chatMessages" data-room="{{ room_name }}">
             {% if messages %}
                 {% for msg in messages %}
-                    <div class="message {% if msg.sender == request.user %}sent{% else %}received{% endif %}">
-                        <strong>{{ msg.sender.username }}:</strong> {{ msg.message }}
+                    <div class="message {% if msg.sender.userid == request.user.userid %}sent{% else %}received{% endif %}">
+                        <div class="message-content">
+                            {% if msg.sender.userid != request.user.userid and chat_type == "group" %}
+                                <strong>
+                                {% if msg.sender.first_name or msg.sender.last_name %}
+                                    {{ msg.sender.first_name|title }} {{ msg.sender.last_name|title }}
+                                {% else %}
+                                    {{ msg.sender.username|lower }}
+                                {% endif %}
+                                :</strong>
+                            {% endif %}
+                            {{ msg.message }}
+                        </div>
                         <div class="timestamp">{{ msg.timestamp|date:"H:i" }}</div>
                     </div>
                 {% endfor %}

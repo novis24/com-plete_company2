@@ -1,0 +1,2 @@
+CRITICAL 2025-08-29 12:02:27,523 server 16444 16416 Listen failure: Couldn't listen on 0.0.0.0:8000: [WinError 10048] Only one usage of each socket address (protocol/network address/port) is normally permitted.
+CRITICAL 2025-08-29 12:04:22,280 server 10516 16172 Listen failure: Couldn't listen on 0.0.0.0:8000: [WinError 10048] Only one usage of each socket address (protocol/network address/port) is normally permitted.

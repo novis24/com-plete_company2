@@ -101,7 +101,7 @@ def home(request):
         'room_name': None,
         'messages': None,
         'chat_type': None,
-        'available_users': User.objects.exclude(id=request.user.id),
+        'available_users': User.objects.exclude(userid=request.user.userid),
     })
 
 
@@ -144,7 +144,7 @@ def chat_area(request, chat_type, chat_id):
         'room_name': room_name,
         'messages': messages,
         'chat_type': chat_type,
-        'available_users': User.objects.exclude(id=request.user.id),
+        'available_users': User.objects.exclude(userid=request.user.userid),
     })
 
 
@@ -225,32 +225,28 @@ def mark_messages_as_read(request):
 def get_messages(request, chat_type, chat_id):
     try:
         messages_data = []
-        messages = None
 
         if chat_type == 'private':
             chat = get_object_or_404(PrivateChat, Q(user1=request.user) | Q(user2=request.user), id=chat_id)
             messages = Message.objects.filter(private_chat=chat).order_by('timestamp')
-
         elif chat_type == 'group':
             group = get_object_or_404(GroupChat, id=chat_id, members=request.user)
             messages = Message.objects.filter(group=group).order_by('timestamp')
-
         else:
             return JsonResponse({'error': 'Invalid chat type'}, status=400)
 
-        if messages is not None:
-            for message in messages:
-                messages_data.append({
-                    'sender': message.sender.username,
-                    'message': message.message,
-                    'timestamp': message.timestamp.strftime('%b. %d, %I:%M %p')
-                })
+        for message in messages:
+            messages_data.append({
+                'sender_username': message.sender.username,
+                'sender_first_name': message.sender.first_name or message.sender.username,
+                'message': message.message,
+                'timestamp': message.timestamp.strftime('%b. %d, %I:%M %p')
+            })
 
         return JsonResponse({'messages': messages_data})
 
     except Exception as e:
         return JsonResponse({'error': f'Internal server error: {str(e)}'}, status=500)
-
 
 # ---------------- Search Users ----------------
 
@@ -265,7 +261,7 @@ def search_users(request):
         Q(first_name__icontains=query) |
         Q(middle_name__icontains=query) |
         Q(last_name__icontains=query)
-    ).exclude(id=request.user.id).values('id', 'first_name','middle_name','last_name')[:10]
+    ).exclude(userid=request.user.userid).values('userid', 'first_name','middle_name','last_name')[:10]
 
     return JsonResponse({'users': list(users)})
 
@@ -276,15 +272,10 @@ def search_users(request):
 @csrf_exempt
 @require_POST
 def create_private_chat(request):
-    if not (request.user.is_superuser or request.user.is_staff):
-            return JsonResponse(
-                {'success': False, 'error': 'You do not have permission to create a new chat.'},
-                status=403
-            )
     try:
         data = json.loads(request.body)
         user_id = data.get('user_id')
-        other_user = get_object_or_404(User, id=user_id)
+        other_user = get_object_or_404(User, userid=user_id)
 
         chat = PrivateChat.objects.filter(
             (Q(user1=request.user) & Q(user2=other_user)) |
@@ -320,7 +311,7 @@ def create_group_chat(request):
         group = GroupChat.objects.create(name=name)
         group.members.add(request.user)
 
-        members = User.objects.filter(id__in=member_ids)
+        members = User.objects.filter(userid__in=member_ids)
         for member in members:
             group.members.add(member)
 
@@ -328,3 +319,5 @@ def create_group_chat(request):
 
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
+    
+

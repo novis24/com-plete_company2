@@ -307,6 +307,246 @@ body {
     margin-left: 10px;
     flex-shrink: 0;
 }
+/* Search results styling */
+.search-results {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-top: 5px;
+    background: white;
+}
+
+.search-result-item {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.search-result-item:hover {
+    background-color: #f5f5f5;
+}
+
+.no-results {
+    padding: 10px;
+    color: #888;
+    text-align: center;
+}
+
+/* Selected members styling */
+.selected-members {
+    margin-top: 10px;
+}
+
+.selected-member {
+    display: inline-block;
+    background-color: #e3f2fd;
+    padding: 5px 10px;
+    border-radius: 15px;
+    margin: 5px;
+    font-size: 14px;
+}
+
+.remove-member {
+    cursor: pointer;
+    margin-left: 5px;
+    font-weight: bold;
+}
+
+.remove-member:hover {
+    color: #f44336;
+}
+
+/* Modal form styling */
+.chat-form {
+    margin-top: 15px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.create-chat-btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.create-chat-btn:hover {
+    background-color: #45a049;
+}
+
+
+/* Search functionality */
+.search-input-wrapper {
+    position: relative;
+    margin: 10px 0;
+}
+
+.search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+}
+
+.clear-search-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+    cursor: pointer;
+}
+
+.clear-search-icon:hover {
+    color: #f44336;
+}
+
+.list-search-input {
+    width: 100%;
+    padding: 8px 35px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    font-size: 14px;
+}
+
+/* Search results styling */
+.search-results {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-top: 5px;
+    background: white;
+    position: absolute;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.search-result-item {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.search-result-item:hover {
+    background-color: #f5f5f5;
+}
+
+.no-results {
+    padding: 10px;
+    color: #888;
+    text-align: center;
+}
+
+/* Selected members styling */
+.selected-members {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.selected-member {
+    display: inline-flex;
+    align-items: center;
+    background-color: #e3f2fd;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 14px;
+}
+
+.remove-member {
+    cursor: pointer;
+    margin-left: 5px;
+    font-weight: bold;
+    color: #666;
+}
+
+.remove-member:hover {
+    color: #f44336;
+}
+
+/* Modal form styling */
+.chat-form {
+    margin-top: 15px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.create-chat-btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.create-chat-btn:hover {
+    background-color: #45a049;
+}
+
+.create-chat-btn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* ----------------------------------------
     CHAT MAIN AREA STYLES (RIGHT COLUMN)
