@@ -23,6 +23,23 @@
                             <a href="{% url 'a_rtchat:filter_chats' 'group' %}" class="filter-option" data-filter="group">Groups</a>
                         </div>
                     </div>
+
+                     <!-- ADMIN PANEL BUTTON -->
+                    {% if request.user.is_staff %}
+                    <a href="{% url 'admin:index' %}" style="margin-left:10px;">
+                        <button class="admin-panel-btn" style="
+                            padding:5px 10px;
+                            font-size:0.85rem;
+                            border:none;
+                            border-radius:4px;
+                            background-color:#022457;
+                            color:white;
+                            cursor:pointer;
+                        ">
+                            Admin
+                        </button>
+                    </a>
+                    {% endif %}
                 </div>
             </div>
             <div class="search-input-wrapper">
@@ -35,7 +52,7 @@
         {% for chat in all_chats %}
             {% if chat.chat_type == 'group' %}
                 <li class="contact-item group-chat" data-type="group" data-room="{{ chat.id }}">
-                    <img src="{% static 'images/user.png' %}" alt="chat icon" class="nav-icon">
+                    <img src="{% static 'images/people.png' %}" alt="chat icon" class="nav-icon">
                     <div class="contact-info">
                         <span class="contact-name">{{ chat.name }}</span>
                         <span class="last-message">

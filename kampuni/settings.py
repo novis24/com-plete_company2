@@ -13,8 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-nby^&+s^@^!l^1di#&4z&9+y_5&s#qu)7$d9w9sw2w&=5f^=%^'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
+DEBUG = False
 
 ALLOWED_HOSTS = [
     '127.0.0.1',
@@ -23,12 +22,10 @@ ALLOWED_HOSTS = [
     # '192.168.1.58',
 ]
 
-
 # Application definition
 INSTALLED_APPS = [
     'daphne',
 
-    
     'jazzmin',
     'channels',
     'django.contrib.admin',
@@ -165,7 +162,7 @@ JAZZMIN_SETTINGS = {
     "welcome_sign": "Welcome to the Utel Global Administration",
 
     # Copyright on the footer
-    "copyright": "homelandtech@vis.tel",
+    "copyright": "utel global company ltd",
 
     # List of model admins to search from the search bar, search bar omitted if excluded
     # If you want to use a single search field you dont need to use a list, you can use a simple string 
@@ -184,12 +181,18 @@ JAZZMIN_SETTINGS = {
 
     # Links to put along the top menu
     "topmenu_links": [
-
-        # Url that gets reversed (Permissions can be added)
-        {"name": "Home",  "url": "admin:index", "permissions": ["auth.view_user"]},
-
+        
+        {"name": "View Site", "url": "/home/", "permissions": ["auth.view_user"]},  # adjust permissions as needed
+    
+      
         # external url that opens in a new window (Permissions can be added)
-        {"name": "Support", "url": "https://github.com/farridav/django-jazzmin/issues", "new_window": True},
+        {
+            "name": "Support",
+            "url": "https://mail.google.com/mail/?view=cm&to=imanovisfelician@gmail.com&su=Jazzmin%20Support&body=Hello%2C%20I%20need%20help%20with...",
+            "new_window": True
+        },
+
+       
 
         # model admin to link to (Permissions checked against model)
         {"model": "auth.User"},

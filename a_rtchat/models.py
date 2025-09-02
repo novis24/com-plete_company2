@@ -106,10 +106,10 @@ class Message(models.Model):
         on_delete=models.SET_NULL,
         related_name='deleted_messages'  # Unique related_name for deleted_by
     )
-    
     def __str__(self):
-        sender = self.sender.username if self.sender else "Unknown"
-        return f"From {sender} at {self.timestamp}"
+        sender_name = self.sender.first_name if self.sender else "Unknown"
+        timestamp = self.timestamp.strftime('%Y-%m-%d %H:%M') if self.timestamp else "Unknown time"
+        return f"From {sender_name} at {timestamp}"
 
     class Meta:
         ordering = ['timestamp']  # Optional: ensures messages are ordered by timestamp
