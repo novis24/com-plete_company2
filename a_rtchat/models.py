@@ -60,8 +60,8 @@ class PrivateChat(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        user1 = self.user1.username if self.user1 else "Unknown"
-        user2 = self.user2.username if self.user2 else "Unknown"
+        user1 = self.user1.first_name if self.user1 else "Unknown"
+        user2 = self.user2.first_name if self.user2 else "Unknown"
         return f"{user1} & {user2}"
 
     def get_other_user(self, current_user):

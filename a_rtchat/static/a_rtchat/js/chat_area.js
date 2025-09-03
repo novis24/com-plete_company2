@@ -17,74 +17,48 @@ function getCookie(name) {
 }
 
 // ================================
-// Chat List Updates
+// Time Formatting
 // ================================
-function updateLastMessage(chatListItem, message) {
-    const lastMessageSpan = chatListItem.querySelector('.last-message');
-    if (lastMessageSpan) lastMessageSpan.textContent = message.message.substring(0, 30);
+function formatTime12h(date) {
+    let h = date.getHours();
+    const m = date.getMinutes().toString().padStart(2, "0");
+    const ampm = h >= 12 ? "PM" : "AM";
+    h = h % 12 || 12;
+    return `${h}:${m} ${ampm}`;
 }
 
-function updateUnreadCount(chatListItem) {
-    const unreadMarker = chatListItem.querySelector('.unread-marker');
-    if (unreadMarker) {
-        unreadMarker.textContent = parseInt(unreadMarker.textContent, 10) + 1;
-        unreadMarker.style.display = 'inline-block';
-    } else {
-        const newUnreadMarker = document.createElement('span');
-        newUnreadMarker.className = 'unread-marker';
-        newUnreadMarker.textContent = '1';
-        newUnreadMarker.style.display = 'inline-block';
-        chatListItem.appendChild(newUnreadMarker);
-    }
-}
-
-function markMessagesAsRead(chatListItem) {
-    if (!chatListItem) return;
-
-    const unreadMarker = chatListItem.querySelector('.unread-marker');
-    if (unreadMarker) unreadMarker.remove();
-
-    const room_id = chatListItem.dataset.room;
-    const is_private = chatListItem.dataset.type === 'private';
-    const csrfToken = getCookie('csrftoken');
-
-    fetch('/mark_messages_as_read/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
-        body: JSON.stringify({ room_id, is_private })
-    }).catch(err => console.error('Error marking as read:', err));
+function applyLocalTime(root = document) {
+    root.querySelectorAll("[data-iso]").forEach(el => {
+        const iso = el.getAttribute("data-iso");
+        if (!iso) return;
+        const d = new Date(iso);
+        el.textContent = formatTime12h(d);
+    });
 }
 
 // ================================
-// Display Messages (centralized)
+// Display Messages
 // ================================
 function displayMessage(message, senderFirstName, senderUsername, currentUsername, timestamp, chatType) {
-    const chatMessages = document.getElementById('chatMessages');
-    
-    // Remove "no messages" message if it exists
-    const emptyMessage = chatMessages.querySelector('.empty');
-    if (emptyMessage) {
-        emptyMessage.remove();
-    }
+    const chatMessages = document.getElementById("chatMessages");
+    const placeholder = chatMessages.querySelector('.empty');
+    if (placeholder) placeholder.remove();
 
-    const messageElement = document.createElement('div');
-    messageElement.classList.add('message');
-
-    // Alignment
+    const messageElement = document.createElement("div");
+    messageElement.classList.add("message");
     const isSent = senderUsername === currentUsername;
-    messageElement.classList.add(isSent ? 'sent' : 'received');
+    messageElement.classList.add(isSent ? "sent" : "received");
 
-    // Group chat: show sender name if not current user
-    let messageHTML = '';
-    if (chatType === "group" && !isSent) {
-        messageHTML = `<strong>${senderFirstName}:</strong> ${message}`;
-    } else {
-        messageHTML = message;
-    }
+    let messageHTML = (chatType === "group" && !isSent)
+        ? `<strong>${senderFirstName}:</strong> ${message}`
+        : message;
+
+    const d = new Date(timestamp);
+    const formattedTime = formatTime12h(d);
 
     messageElement.innerHTML = `
         <div class="message-content">${messageHTML}</div>
-        <div class="timestamp">${timestamp}</div>
+        <div class="timestamp" data-iso="${timestamp}">${formattedTime}</div>
     `;
 
     chatMessages.appendChild(messageElement);
@@ -107,7 +81,6 @@ function connectToRoom(roomType, roomId) {
         if (data.type === 'chat_message') {
             const senderFirstName = (data.sender_first_name || data.sender || 'unknown').toLowerCase();
             const senderUsername = data.sender_username || data.sender || 'unknown';
-
             displayMessage(data.message, senderFirstName, senderUsername, currentUsername, data.timestamp, data.room_type);
         } else if (data.type === 'notification') {
             const chatList = document.getElementById('chatList');
@@ -125,7 +98,10 @@ function connectToRoom(roomType, roomId) {
                     unreadMarker.textContent = data.unread_count;
                     unreadMarker.style.display = 'inline-block';
                 }
-                if (data.last_message) updateLastMessage(chatListItem, data.last_message);
+                if (data.last_message) {
+                    const lastMessageSpan = chatListItem.querySelector('.last-message');
+                    if (lastMessageSpan) lastMessageSpan.textContent = data.last_message.message.substring(0,30);
+                }
                 chatListItem.parentNode.prepend(chatListItem);
             }
         }
@@ -149,54 +125,61 @@ function sendMessage() {
     if (message && window.chatSocket && roomType && roomId) {
         window.chatSocket.send(JSON.stringify({ message, room_type: roomType, room_id: roomId }));
         messageInput.value = '';
+        const placeholder = chatMessages.querySelector('.empty');
+        if (placeholder) placeholder.remove();
     }
 }
 
 // ================================
-// Search Chats Functionality
+// Mark Messages as Read
+// ================================
+function markMessagesAsRead(chatListItem) {
+    if (!chatListItem) return;
+    const unreadMarker = chatListItem.querySelector('.unread-marker');
+    if (unreadMarker) unreadMarker.remove();
+
+    const room_id = chatListItem.dataset.room;
+    const is_private = chatListItem.dataset.type === 'private';
+    const csrfToken = getCookie('csrftoken');
+
+    fetch('/mark_messages_as_read/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+        body: JSON.stringify({ room_id, is_private })
+    }).catch(err => console.error('Error marking as read:', err));
+}
+
+// ================================
+// Chat List Search
 // ================================
 function setupChatSearch() {
     const searchInput = document.querySelector('.list-search-input');
     const clearSearchIcon = document.querySelector('.clear-search-icon');
     const chatItems = document.querySelectorAll('.contact-item');
-
     if (!searchInput) return;
 
     searchInput.addEventListener('input', function(e) {
         const searchTerm = e.target.value.toLowerCase().trim();
-        
-        // Show/hide clear icon
-        if (clearSearchIcon) {
-            clearSearchIcon.style.display = searchTerm ? 'block' : 'none';
-        }
+        if (clearSearchIcon) clearSearchIcon.style.display = searchTerm ? 'block' : 'none';
 
         chatItems.forEach(item => {
             const contactName = item.querySelector('.contact-name').textContent.toLowerCase();
-            const lastMessage = item.querySelector('.last-message').textContent.toLowerCase();
-            
-            if (contactName.includes(searchTerm) || lastMessage.includes(searchTerm)) {
-                item.style.display = 'flex';
-            } else {
-                item.style.display = 'none';
-            }
+            const lastMessage = item.querySelector('.last-message')?.textContent.toLowerCase() || '';
+            item.style.display = contactName.includes(searchTerm) || lastMessage.includes(searchTerm) ? 'flex' : 'none';
         });
     });
 
-    // Clear search functionality
     if (clearSearchIcon) {
         clearSearchIcon.addEventListener('click', function() {
             searchInput.value = '';
             this.style.display = 'none';
-            
-            chatItems.forEach(item => {
-                item.style.display = 'flex';
-            });
+            chatItems.forEach(item => item.style.display = 'flex');
         });
     }
 }
 
 // ================================
-// User Search Functions
+// User Search (Private / Group)
 // ================================
 function searchUsers(query, resultsContainer, isGroupSearch = false) {
     if (query.length < 2) {
@@ -206,7 +189,7 @@ function searchUsers(query, resultsContainer, isGroupSearch = false) {
     }
 
     fetch(`/search_users/?q=${encodeURIComponent(query)}`)
-        .then(response => response.json())
+        .then(res => res.json())
         .then(data => {
             resultsContainer.innerHTML = '';
             if (data.users && data.users.length > 0) {
@@ -215,18 +198,12 @@ function searchUsers(query, resultsContainer, isGroupSearch = false) {
                     const userElement = document.createElement('div');
                     userElement.className = 'search-result-item';
                     userElement.dataset.userId = user.userid;
-                    
-                    const displayName = user.first_name && user.last_name 
-                        ? `${user.first_name} ${user.last_name}` 
-                        : user.userid;
-                    
+                    const displayName = user.first_name && user.last_name ? `${user.first_name} ${user.last_name}` : user.userid;
                     userElement.textContent = displayName;
+
                     userElement.addEventListener('click', () => {
-                        if (isGroupSearch) {
-                            // For group member selection
-                            addGroupMember(user.userid, displayName);
-                        } else {
-                            // For private chat selection
+                        if (isGroupSearch) addGroupMember(user.userid, displayName);
+                        else {
                             const searchInput = document.getElementById('userSearchInput');
                             searchInput.value = displayName;
                             searchInput.dataset.selectedUserId = user.userid;
@@ -234,17 +211,13 @@ function searchUsers(query, resultsContainer, isGroupSearch = false) {
                             resultsContainer.style.display = 'none';
                         }
                     });
-                    
                     resultsContainer.appendChild(userElement);
                 });
             } else {
                 resultsContainer.style.display = 'block';
                 resultsContainer.innerHTML = '<div class="no-results">No users found</div>';
             }
-        })
-        .catch(error => {
-            console.error('Error searching users:', error);
-        });
+        }).catch(err => console.error('User search error:', err));
 }
 
 // ================================
@@ -252,299 +225,304 @@ function searchUsers(query, resultsContainer, isGroupSearch = false) {
 // ================================
 function addGroupMember(userId, userName) {
     const selectedMembers = document.getElementById('selectedMembers');
-    const selectedUsers = Array.from(selectedMembers.querySelectorAll('.selected-member'))
-        .map(el => el.dataset.userId);
-    
+    const selectedUsers = Array.from(selectedMembers.querySelectorAll('.selected-member')).map(el => el.dataset.userId);
+
     if (!selectedUsers.includes(userId)) {
-        const selectedMember = document.createElement('div');
-        selectedMember.className = 'selected-member';
-        selectedMember.dataset.userId = userId;
-        selectedMember.innerHTML = `
-            ${userName}
-            <span class="remove-member" data-user-id="${userId}">×</span>
-        `;
-        selectedMembers.appendChild(selectedMember);
-        
-        // Clear search input and results
-        const groupMemberSearch = document.getElementById('groupMemberSearch');
-        const groupMemberResults = document.getElementById('groupMemberResults');
-        if (groupMemberSearch) groupMemberSearch.value = '';
-        if (groupMemberResults) {
-            groupMemberResults.innerHTML = '';
-            groupMemberResults.style.display = 'none';
-        }
+        const memberElement = document.createElement('div');
+        memberElement.className = 'selected-member';
+        memberElement.dataset.userId = userId;
+        memberElement.textContent = userName;
+        const removeBtn = document.createElement('span');
+        removeBtn.textContent = ' ×';
+        removeBtn.className = 'remove-member';
+        removeBtn.addEventListener('click', () => memberElement.remove());
+        memberElement.appendChild(removeBtn);
+        selectedMembers.appendChild(memberElement);
     }
-}
-
-function removeGroupMember(userId) {
-    const memberElement = document.querySelector(`.selected-member[data-user-id="${userId}"]`);
-    if (memberElement) {
-        memberElement.remove();
-    }
-}
-
-function getSelectedGroupMembers() {
-    const selectedMembers = document.getElementById('selectedMembers');
-    return Array.from(selectedMembers.querySelectorAll('.selected-member'))
-        .map(el => el.dataset.userId);
 }
 
 // ================================
-// Modal/Dialog Functions
+// Create New Chat (Private / Group)
 // ================================
-function setupModalHandlers() {
-    const createNewChatBtn = document.getElementById('createNewChat');
-    const closeNewChatModalBtn = document.getElementById('closeNewChatModal');
-    const newChatModal = document.getElementById('newChatModal');
-    const chatTypeBtns = document.querySelectorAll('.chat-type-btn');
-    const privateChatForm = document.getElementById('privateChatForm');
-    const groupChatForm = document.getElementById('groupChatForm');
-    const userSearchInput = document.getElementById('userSearchInput');
-    const userSearchResults = document.getElementById('userSearchResults');
-    const createPrivateChatBtn = document.getElementById('createPrivateChatBtn');
-    const groupNameInput = document.getElementById('groupNameInput');
-    const groupMemberSearch = document.getElementById('groupMemberSearch');
-    const groupMemberResults = document.getElementById('groupMemberResults');
-    const selectedMembers = document.getElementById('selectedMembers');
-    const createGroupChatBtn = document.getElementById('createGroupChatBtn');
+function createNewChat(e) {
+    e.preventDefault();
+    const btnId = e.currentTarget.id;
+    const chatType = btnId === 'createPrivateChatBtn' ? 'private' : 'group';
+    const csrfToken = getCookie('csrftoken');
 
-    // Open modal
-    if (createNewChatBtn) {
-        createNewChatBtn.addEventListener('click', () => {
-            newChatModal.style.display = 'flex';
-            // Reset forms
-            if (userSearchInput) {
-                userSearchInput.value = '';
-                userSearchInput.dataset.selectedUserId = '';
-            }
-            if (userSearchResults) {
-                userSearchResults.innerHTML = '';
-                userSearchResults.style.display = 'none';
-            }
-            if (groupNameInput) groupNameInput.value = '';
-            if (groupMemberSearch) groupMemberSearch.value = '';
-            if (groupMemberResults) {
-                groupMemberResults.innerHTML = '';
-                groupMemberResults.style.display = 'none';
-            }
-            if (selectedMembers) selectedMembers.innerHTML = '';
+    if (chatType === 'private') {
+        const userId = document.getElementById('userSearchInput')?.dataset.selectedUserId;
+        if (!userId) return alert("Select a user");
+
+        fetch('/create_private_chat/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+            body: JSON.stringify({ user_id: userId })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) location.reload();
+            else alert(data.error || 'Error creating chat');
+        });
+    } else if (chatType === 'group') {
+        const members = Array.from(document.querySelectorAll('#selectedMembers .selected-member')).map(el => el.dataset.userId);
+        const groupNameInput = document.getElementById('groupNameInput');
+        if (!groupNameInput) return alert("Group name input not found!");
+
+        const groupName = groupNameInput.value.trim();
+        if (!groupName || members.length === 0) return alert("Enter group name and select members");
+
+        fetch('/create_group_chat/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+            body: JSON.stringify({ name: groupName, members })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) location.reload();
+            else alert(data.error || 'Error creating group chat');
         });
     }
-
-    // Close modal
-    if (closeNewChatModalBtn) {
-        closeNewChatModalBtn.addEventListener('click', () => {
-            newChatModal.style.display = 'none';
-        });
-    }
-
-    // Chat type switching
-    chatTypeBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            chatTypeBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            
-            if (btn.dataset.type === 'private') {
-                privateChatForm.style.display = 'block';
-                groupChatForm.style.display = 'none';
-            } else {
-                privateChatForm.style.display = 'none';
-                groupChatForm.style.display = 'block';
-            }
-        });
-    });
-
-    // User search functionality for private chat
-    if (userSearchInput) {
-        userSearchInput.addEventListener('input', (e) => {
-            searchUsers(e.target.value, userSearchResults, false);
-        });
-        
-        // Hide results when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!userSearchInput.contains(e.target) && !userSearchResults.contains(e.target)) {
-                userSearchResults.style.display = 'none';
-            }
-        });
-    }
-
-    // Group member search functionality
-    if (groupMemberSearch) {
-        groupMemberSearch.addEventListener('input', (e) => {
-            searchUsers(e.target.value, groupMemberResults, true);
-        });
-        
-        // Hide results when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!groupMemberSearch.contains(e.target) && !groupMemberResults.contains(e.target)) {
-                groupMemberResults.style.display = 'none';
-            }
-        });
-    }
-
-    // Remove selected group member
-    if (selectedMembers) {
-        selectedMembers.addEventListener('click', (e) => {
-            if (e.target.classList.contains('remove-member')) {
-                const userId = e.target.dataset.userId;
-                removeGroupMember(userId);
-            }
-        });
-    }
-
-    // Create private chat
-    if (createPrivateChatBtn) {
-        createPrivateChatBtn.addEventListener('click', () => {
-            const userId = userSearchInput.dataset.selectedUserId;
-            if (!userId) {
-                alert('Please select a user first');
-                return;
-            }
-
-            const csrfToken = getCookie('csrftoken');
-            fetch('/create_private_chat/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrfToken
-                },
-                body: JSON.stringify({ user_id: userId })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    newChatModal.style.display = 'none';
-                    
-                    // Instead of reloading, navigate to the new chat
-                    if (data.exists) {
-                        // Chat already exists, just navigate to it
-                        window.location.href = `/chat/private/${data.chat_id}/`;
-                    } else {
-                        // New chat created, navigate to it
-                        window.location.href = `/chat/private/${data.chat_id}/`;
-                    }
-                } else {
-                    alert('Error creating chat: ' + data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error creating chat');
-            });
-        });
-    }
-
-    // Create group chat
-    if (createGroupChatBtn) {
-        createGroupChatBtn.addEventListener('click', () => {
-            const groupName = groupNameInput.value.trim();
-            const memberIds = getSelectedGroupMembers();
-
-            if (!groupName) {
-                alert('Please enter a group name');
-                return;
-            }
-
-            if (memberIds.length === 0) {
-                alert('Please add at least one member to the group');
-                return;
-            }
-
-            const csrfToken = getCookie('csrftoken');
-            fetch('/create_group_chat/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrfToken
-                },
-                body: JSON.stringify({ 
-                    name: groupName,
-                    members: memberIds 
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    newChatModal.style.display = 'none';
-                    // Navigate to the new group chat
-                    window.location.href = `/chat/group/${data.group_id}/`;
-                } else {
-                    alert('Error creating group: ' + data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error creating group');
-            });
-        });
-    }
-
-    // Close modal when clicking outside
-    newChatModal.addEventListener('click', (e) => {
-        if (e.target === newChatModal) {
-            newChatModal.style.display = 'none';
-        }
-    });
 }
 
 // ================================
-// Chat Switching & Loading Messages
+// DOM Ready - Setup Everything
 // ================================
 document.addEventListener('DOMContentLoaded', () => {
-    const chatListItems = document.querySelectorAll('.contact-item');
+    
     const chatBody = document.getElementById('chatBody');
-    const showChatListBtn = document.getElementById('showChatListBtn');
     const chatList = document.getElementById('chatList');
     const currentUsername = document.getElementById('chatAppContent').dataset.username;
 
-    // Setup all functionality
-    setupModalHandlers();
     setupChatSearch();
 
-    // Send message handlers
+    // Send message
     document.getElementById('sendButton').onclick = sendMessage;
     document.getElementById('messageInput').addEventListener('keydown', (e) => {
         if (e.key === 'Enter') { e.preventDefault(); sendMessage(); }
     });
 
-    // Chat item click handlers
-    chatListItems.forEach(item => {
-        item.addEventListener('click', () => {
-            const roomName = item.dataset.room;
-            const chatType = item.dataset.type;
+    // Chat item click
+    chatList.addEventListener('click', (e) => {
+        const item = e.target.closest('.contact-item');
+        if (!item) return;
 
-            connectToRoom(chatType, roomName);
-            markMessagesAsRead(item);
+        const roomName = item.dataset.room;
+        const chatType = item.dataset.type;
 
-            fetch(`/get_messages/${chatType}/${roomName}/`)
-                .then(res => res.json())
-                .then(data => {
-                    const chatMessages = document.getElementById('chatMessages');
-                    chatMessages.innerHTML = '';
+        if (window.innerWidth <= 768) {
+            chatList.style.display = 'none';
+            chatBody.style.display = 'flex';
+        }
 
-                    if (data.messages && data.messages.length > 0) {
-                        data.messages.forEach(msg => {
-                            const senderFirstName = (msg.sender_first_name || msg.sender || 'unknown').toLowerCase();
-                            const senderUsername = msg.sender_username || msg.sender || 'unknown';
-                            displayMessage(msg.message, senderFirstName, senderUsername, currentUsername, msg.timestamp, chatType);
-                        });
-                    } else {
-                        chatMessages.innerHTML = '<p class="empty">No messages in this chat yet</p>';
-                    }
+        connectToRoom(chatType, roomName);
+        markMessagesAsRead(item);
 
-                    chatMessages.dataset.room = `${chatType}_${roomName}`;
-                });
+        fetch(`/get_messages/${chatType}/${roomName}/`)
+            .then(res => res.json())
+            .then(data => {
+                const chatMessages = document.getElementById('chatMessages');
+                chatMessages.innerHTML = '';
+                if (data.messages && data.messages.length > 0) {
+                    data.messages.forEach(msg => {
+                        const senderFirstName = (msg.sender_first_name || msg.sender || 'unknown').toLowerCase();
+                        const senderUsername = msg.sender_username || msg.sender || 'unknown';
+                        displayMessage(msg.message, senderFirstName, senderUsername, currentUsername, msg.timestamp, chatType);
+                    });
+                } else {
+                    chatMessages.innerHTML = '<p class="empty">No messages in this chat yet</p>';
+                }
+                chatMessages.dataset.room = `${chatType}_${roomName}`;
+            });
 
-            const contactName = item.querySelector('.contact-name').textContent;
-            document.querySelector('.chat-main .contact-name').textContent = contactName;
+        const contactName = item.querySelector('.contact-name').textContent;
+        document.querySelector('.chat-main .contact-name').textContent = contactName;
 
-            if (window.innerWidth <= 768) { chatList.style.display = 'none'; chatBody.style.display = 'flex'; }
+        // --- NEW: Show/Hide Group Info Button ---
+        const groupInfoBtn = document.getElementById('groupInfoBtn');
+        if (groupInfoBtn) {
+            groupInfoBtn.style.display = chatType === 'group' ? 'inline-flex' : 'none';
+        }
+    });
+
+    // Show chat list button (mobile)
+    const showChatListBtn = document.getElementById('showChatListBtn');
+    if (showChatListBtn) {
+        showChatListBtn.addEventListener('click', () => {
+            if (window.innerWidth <= 768) {
+                chatList.style.display = 'block';
+                chatBody.style.display = 'none';
+            }
+        });
+    }
+
+    // Private search
+    const userSearchInput = document.getElementById('userSearchInput');
+    const userResultsContainer = document.getElementById('userSearchResults');
+    if (userSearchInput && userResultsContainer) {
+        userSearchInput.addEventListener('input', (e) => searchUsers(e.target.value, userResultsContainer, false));
+    }
+
+    // Group search
+    const groupSearchInput = document.getElementById('groupMemberSearch');
+    const groupResultsContainer = document.getElementById('groupMemberResults');
+    if (groupSearchInput && groupResultsContainer) {
+        groupSearchInput.addEventListener('input', (e) => searchUsers(e.target.value, groupResultsContainer, true));
+    }
+
+    // Chat type toggle
+    document.querySelectorAll('.chat-type-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.chat-type-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const type = btn.dataset.type;
+            document.getElementById('privateChatForm').style.display = type === 'private' ? 'block' : 'none';
+            document.getElementById('groupChatForm').style.display = type === 'group' ? 'block' : 'none';
         });
     });
 
-    if (showChatListBtn) {
-        showChatListBtn.addEventListener('click', () => {
-            if (window.innerWidth <= 768) { chatList.style.display = 'block'; chatBody.style.display = 'none'; }
+    // Modal open/close
+    document.getElementById('createNewChat').addEventListener('click', () => {
+        document.getElementById('newChatModal').style.display = 'flex';
+    });
+    document.getElementById('closeNewChatModal').addEventListener('click', () => {
+        document.getElementById('newChatModal').style.display = 'none';
+    });
+
+    // Create chat buttons
+    document.getElementById('createPrivateChatBtn').addEventListener('click', createNewChat);
+    document.getElementById('createGroupChatBtn').addEventListener('click', createNewChat);
+
+    // Format existing timestamps
+    applyLocalTime();
+
+    // Watch for new messages
+    const chatMessages = document.getElementById("chatMessages");
+    if (chatMessages) {
+        const observer = new MutationObserver(mutations => {
+            for (const mutation of mutations) {
+                mutation.addedNodes.forEach(node => {
+                    if (node.nodeType === 1) applyLocalTime(node);
+                });
+            }
         });
+        observer.observe(chatMessages, { childList: true, subtree: true });
     }
+});
+
+// ================================
+// Show Group Members Popup
+// ================================
+(function() {
+    // Create popup container once
+    const groupMembersPopup = document.createElement('div');
+    groupMembersPopup.id = 'groupMembersPopup';
+    groupMembersPopup.style.position = 'absolute';
+    groupMembersPopup.style.display = 'none';
+    groupMembersPopup.style.background = '#fff';
+    groupMembersPopup.style.border = '1px solid #ccc';
+    groupMembersPopup.style.borderRadius = '8px';
+    groupMembersPopup.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
+    groupMembersPopup.style.padding = '10px';
+    groupMembersPopup.style.zIndex = '1000';
+    groupMembersPopup.style.maxHeight = '400px';
+    groupMembersPopup.style.overflowY = 'auto';
+    document.body.appendChild(groupMembersPopup);
+
+    // Hide popup if clicked outside
+    document.addEventListener('click', (e) => {
+        if (!groupMembersPopup.contains(e.target) && !e.target.closest('#groupIcon')) {
+            groupMembersPopup.style.display = 'none';
+        }
+    });
+
+    // Click handler for group icon
+    document.getElementById('groupIcon')?.addEventListener('click', async (e) => {
+        e.stopPropagation(); // prevent closing immediately
+        const chatMessages = document.getElementById('chatMessages');
+        if (!chatMessages) return;
+
+        const [roomType, roomId] = chatMessages.dataset.room.split('_');
+        if (roomType !== 'group') return;
+
+        try {
+            const res = await fetch(`/get_group_members/${roomId}/`);
+            const data = await res.json();
+
+            if (!data.members || data.members.length === 0) {
+                groupMembersPopup.innerHTML = '<p style="margin:0;">No members found</p>';
+            } else {
+                groupMembersPopup.innerHTML = '';
+                data.members.forEach(member => {
+                    const div = document.createElement('div');
+                    div.className = 'group-member';
+                    div.style.display = 'flex';
+                    div.style.alignItems = 'center';
+                    div.style.gap = '8px';
+                    div.style.padding = '6px 4px';
+                    div.style.borderBottom = '1px solid #eee';
+                    div.innerHTML = `<span class="member-name">${member.name}</span>`;
+                    groupMembersPopup.appendChild(div);
+                });
+            }
+
+            // Position popup under icon
+            const rect = e.target.getBoundingClientRect();
+            groupMembersPopup.style.top = `${rect.bottom + window.scrollY}px`;
+            groupMembersPopup.style.left = `${rect.left + window.scrollX}px`;
+            groupMembersPopup.style.display = 'block';
+        } catch (err) {
+            console.error('Failed to fetch group members:', err);
+        }
+    });
+})();
+
+
+// Group Info Button Click - Show Members
+const groupInfoBtn = document.getElementById('groupInfoBtn');
+const groupMembersModal = document.getElementById('groupMembersModal');
+const groupMembersList = document.getElementById('groupMembersList');
+const closeGroupMembersModal = document.getElementById('closeGroupMembersModal');
+
+if (groupInfoBtn) {
+    groupInfoBtn.addEventListener('click', () => {
+        const chatMessages = document.getElementById('chatMessages');
+        const roomData = chatMessages.dataset.room; // format: "group_<roomId>"
+        if (!roomData) return;
+
+        const roomId = roomData.split('_')[1];
+
+        // Fetch members from your backend
+        fetch(`/get_group_members/${roomId}/`)
+            .then(res => res.json())
+            .then(data => {
+                groupMembersList.innerHTML = '';
+                if (data.members && data.members.length > 0) {
+                    data.members.forEach(member => {
+                        const div = document.createElement('div');
+                        div.className = 'group-member';
+                        div.textContent = member.first_name && member.last_name ? 
+                                          `${member.first_name} ${member.last_name}` : 
+                                          member.username;
+                        groupMembersList.appendChild(div);
+                    });
+                } else {
+                    groupMembersList.innerHTML = '<p>No members found</p>';
+                }
+                groupMembersModal.style.display = 'flex';
+            })
+            .catch(err => console.error('Error fetching group members:', err));
+    });
+}
+
+// Close modal
+if (closeGroupMembersModal) {
+    closeGroupMembersModal.addEventListener('click', () => {
+        groupMembersModal.style.display = 'none';
+    });
+}
+
+// Close modal when clicking outside content
+window.addEventListener('click', (e) => {
+    if (e.target === groupMembersModal) groupMembersModal.style.display = 'none';
 });

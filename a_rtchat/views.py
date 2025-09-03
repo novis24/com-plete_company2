@@ -149,45 +149,31 @@ def chat_area(request, chat_type, chat_id):
 
 
 # ---------------- Chat Filters ----------------
-
 @login_required
 def filter_chats(request, filter_type):
     user = request.user
-    chats = []
+    all_chats = get_all_chats(user)
 
+    # Validate filter_type and prepare filtered list
     if filter_type == 'groups':
-        groups = GroupChat.objects.filter(members=user).annotate(
-            unread_count=Count('chat_messages', filter=Q(chat_messages__read=False) & ~Q(chat_messages__sender=user))
-        ).order_by('-created_at')
-
-        for group in groups:
-            chats.append({
-                'chat_type': 'group',
-                'id': group.id,
-                'name': group.name,
-                'unread_count': group.unread_count
-            })
-
+        filtered_chats = [c for c in all_chats if c['chat_type'] == 'group']
     elif filter_type == 'private':
-        private_chats = PrivateChat.objects.filter(
-            Q(user1=user) | Q(user2=user)
-        ).annotate(
-            unread_count=Count('private_chat_messages', filter=Q(private_chat_messages__read=False) & ~Q(private_chat_messages__sender=user))
-        ).order_by('-created_at')
-
-        for private_chat in private_chats:
-            other_user = private_chat.get_other_user(user)
-            chats.append({
-                'chat_type': 'private',
-                'id': private_chat.id,
-                'other_username': other_user.username,
-                'unread_count': private_chat.unread_count
-            })
-
+        filtered_chats = [c for c in all_chats if c['chat_type'] == 'private']
     else:
-        return JsonResponse({'error': 'Invalid filter type'}, status=400)
+        # Invalid filter type: redirect to home
+        return redirect('a_rtchat:home')
 
-    return JsonResponse({'chats': chats})
+    return render(request, 'a_rtchat/chat_area.html', {
+        'all_chats': filtered_chats,
+        'active_group': None,
+        'active_private_chat': None,
+        'other_username': None,
+        'room_name': None,
+        'messages': [],
+        'chat_type': None,
+        'available_users': User.objects.exclude(userid=user.userid),
+        'current_filter': filter_type  # optional: JS can read this to highlight filter
+    })
 
 
 # ---------------- Mark Messages As Read ----------------

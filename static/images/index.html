@@ -1,0 +1,2225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrunchDelight | Premium Snack Delivery</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ===== Base Styles ===== */
+        :root {
+            --primary: #FF5A5F;
+            --primary-dark: #E04A4F;
+            --secondary: #00A699;
+            --secondary-dark: #008A7D;
+            --accent: #FC642D;
+            --dark: #2D2926;
+            --light: #F7F7F7;
+            --gray: #767676;
+            --light-gray: #E8E8E8;
+            --border-radius: 12px;
+            --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--dark);
+            background-color: var(--light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: var(--transition);
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 28px;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            gap: 8px;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(255, 90, 95, 0.25);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(255, 90, 95, 0.3);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 48px;
+        }
+
+        .section-header h2 {
+            font-size: 2.25rem;
+            position: relative;
+            padding-bottom: 12px;
+        }
+
+        .section-header h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 72px;
+            height: 4px;
+            background-color: var(--primary);
+        }
+
+        .view-all {
+            font-weight: 600;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 1rem;
+        }
+
+        .view-all:hover {
+            color: var(--primary-dark);
+            gap: 10px;
+        }
+
+        /* ===== Preloader ===== */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loader {
+            text-align: center;
+        }
+
+        .snack-loader {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .chip, .cookie, .pretzel {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            position: relative;
+            animation: bounce 1.6s infinite ease-in-out;
+        }
+
+        .chip {
+            background: conic-gradient(
+                #FFC154 0deg 90deg,
+                #FF9F1C 90deg 180deg,
+                #FFC154 180deg 270deg,
+                #FF9F1C 270deg 360deg
+            );
+        }
+
+        .cookie {
+            background: conic-gradient(
+                #E2A76F 0deg 120deg,
+                #C88A57 120deg 240deg,
+                #E2A76F 240deg 360deg
+            );
+            animation-delay: 0.2s;
+        }
+
+        .pretzel {
+            background-color: #D4A76A;
+            animation-delay: 0.4s;
+        }
+
+        .pretzel::before {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 60%;
+            border: 4px solid var(--dark);
+            border-radius: 50%;
+            border-top-color: transparent;
+            border-right-color: transparent;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-24px);
+            }
+        }
+
+        .preloader p {
+            font-size: 1.25rem;
+            color: var(--dark);
+            margin-top: 24px;
+            font-weight: 500;
+        }
+
+        .preloader.fade-out {
+            opacity: 0;
+        }
+
+        /* ===== Announcement Bar ===== */
+        .announcement-bar {
+            background-color: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 12px;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        /* ===== Header ===== */
+        .header {
+            background-color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo span:first-child {
+            color: var(--primary);
+        }
+
+        .logo span:last-child {
+            color: var(--secondary);
+        }
+
+        .main-nav ul {
+            display: flex;
+            gap: 32px;
+        }
+
+        .main-nav a {
+            font-weight: 600;
+            font-size: 1.05rem;
+            position: relative;
+            color: var(--dark);
+        }
+
+        .main-nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: var(--transition);
+        }
+
+        .main-nav a:hover::after {
+            width: 100%;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 12px 48px 12px 20px;
+            border-radius: 50px;
+            border: 1px solid var(--light-gray);
+            width: 240px;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(255, 90, 95, 0.2);
+        }
+
+        .search-box button {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 20px;
+        }
+
+        .header-icons a {
+            font-size: 1.3rem;
+            position: relative;
+            color: var(--dark);
+        }
+
+        .cart-icon .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: var(--primary);
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--dark);
+        }
+
+        /* ===== Hero Section ===== */
+        .hero {
+            position: relative;
+            height: 85vh;
+            min-height: 700px;
+            overflow: hidden;
+        }
+
+        .hero-slider .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .hero-slider .slide.active {
+            opacity: 1;
+        }
+
+        .hero-slider .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 100%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            color: white;
+            max-width: 680px;
+            padding-top: 180px;
+        }
+
+        .hero-subtitle {
+            display: inline-block;
+            background-color: var(--primary);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .hero-content h1 {
+            font-size: 3.75rem;
+            margin-bottom: 24px;
+            line-height: 1.1;
+        }
+
+        .hero-content p {
+            font-size: 1.25rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            max-width: 80%;
+        }
+
+        .hero-slider-controls {
+            position: absolute;
+            bottom: 60px;
+            left: 0;
+            width: 100%;
+            z-index: 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .prev-slide, .next-slide {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+            backdrop-filter: blur(4px);
+        }
+
+        .prev-slide:hover, .next-slide:hover {
+            background-color: var(--primary);
+            transform: scale(1.1);
+        }
+
+        .slide-dots {
+            display: flex;
+            gap: 12px;
+        }
+
+        .slide-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .slide-dot.active {
+            background-color: white;
+            transform: scale(1.2);
+        }
+
+        /* ===== Categories Section ===== */
+        .categories-section {
+            padding: 100px 0;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 24px;
+        }
+
+        .category-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .category-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
+        }
+
+        .category-img {
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+            transition: var(--transition);
+        }
+
+        .category-card:hover .category-img {
+            transform: scale(1.08);
+        }
+
+        .category-card h3 {
+            padding: 24px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        /* ===== Featured Products ===== */
+        .featured-products {
+            padding: 100px 0;
+            background-color: var(--light-gray);
+        }
+        .product-tabs {
+            display: flex;
+            gap: 8px;
+            background-color: white;
+            padding: 6px;
+            border-radius: 50px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .tab-btn {
+            padding: 10px 24px;
+            border: none;
+            background: none;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 50px;
+            transition: var(--transition);
+            font-size: 0.95rem;
+        }
+
+        .tab-btn.active {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(255, 90, 95, 0.3);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 32px;
+        }
+
+        .product-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: var(--primary);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            z-index: 1;
+        }
+
+        .product-badge.hot {
+            background-color: var(--secondary);
+        }
+
+        .product-badge.sale {
+            background-color: var(--accent);
+        }
+
+        .product-img {
+            height: 240px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .product-actions {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .product-card:hover .product-actions {
+            opacity: 1;
+        }
+
+        .quick-view, .add-to-wishlist {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: white;
+            border: none;
+            box-shadow: var(--box-shadow);
+            color: var(--dark);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.1rem;
+            transition: var(--transition);
+        }
+
+        .quick-view:hover, .add-to-wishlist:hover {
+            background-color: var(--primary);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .product-info {
+            padding: 24px;
+        }
+
+        .product-category {
+            font-size: 0.9rem;
+            color: var(--gray);
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .product-title {
+            font-size: 1.25rem;
+            margin-bottom: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+        }
+
+        .product-rating {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .stars {
+            color: var(--accent);
+        }
+
+        .product-price {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .current-price {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .original-price {
+            font-size: 1rem;
+            text-decoration: line-through;
+            color: var(--gray);
+        }
+
+        .btn-add-to-cart {
+            width: 100%;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .section-footer {
+            text-align: center;
+            margin-top: 48px;
+        }
+
+        /* ===== Subscription Banner ===== */
+        .subscription-banner {
+            padding: 100px 0;
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-dark) 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .subscription-banner .container {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .subscription-content {
+            flex: 1;
+            max-width: 600px;
+        }
+
+        .subscription-banner h2 {
+            font-size: 2.5rem;
+            margin-bottom: 24px;
+            color: white;
+        }
+
+        .subscription-banner p {
+            font-size: 1.2rem;
+            margin-bottom: 36px;
+            opacity: 0.9;
+        }
+
+        .subscription-form {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 36px;
+            max-width: 500px;
+        }
+
+        .subscription-form input {
+            flex: 1;
+            padding: 16px 24px;
+            border-radius: var(--border-radius);
+            border: none;
+            font-size: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .subscription-form input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+        }
+
+        .subscription-image {
+            flex: 1;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transform: rotate(-3deg);
+        }
+
+        .subscription-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .subscription-benefits {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .benefit {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1rem;
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 10px 20px;
+            border-radius: 50px;
+            backdrop-filter: blur(4px);
+        }
+
+        .benefit i {
+            color: var(--accent);
+            font-size: 1.2rem;
+        }
+
+        /* ===== Testimonials ===== */
+        .testimonials-section {
+            padding: 100px 0;
+            background-color: var(--light);
+        }
+
+        .testimonials-slider {
+            position: relative;
+            overflow: hidden;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .testimonial {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+
+        .testimonial.active {
+            position: relative;
+            opacity: 1;
+        }
+
+        .testimonial-content {
+            background-color: white;
+            padding: 60px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            position: relative;
+            text-align: center;
+        }
+
+        .testimonial-content::before {
+            content: '"';
+            position: absolute;
+            top: 30px;
+            left: 40px;
+            font-size: 6rem;
+            font-family: 'Playfair Display', serif;
+            color: rgba(0, 0, 0, 0.05);
+            line-height: 1;
+        }
+
+        .rating {
+            color: var(--accent);
+            margin-bottom: 24px;
+            font-size: 1.2rem;
+        }
+
+        .testimonial-text {
+            font-size: 1.25rem;
+            font-style: italic;
+            margin-bottom: 36px;
+            position: relative;
+            z-index: 1;
+            line-height: 1.8;
+        }
+
+        .testimonial-author {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .author-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            border: 3px solid var(--primary);
+        }
+
+        .author-info h4 {
+            font-family: 'Poppins', sans-serif;
+            margin-bottom: 4px;
+            font-size: 1.25rem;
+        }
+
+        .author-info span {
+            font-size: 0.95rem;
+            color: var(--gray);
+        }
+
+        .testimonials-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 24px;
+            margin-top: 40px;
+        }
+
+        .prev-testimonial, .next-testimonial {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--gray);
+            cursor: pointer;
+            transition: var(--transition);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .prev-testimonial:hover, .next-testimonial:hover {
+            color: var(--primary);
+            background-color: rgba(255, 90, 95, 0.1);
+        }
+
+        .testimonial-dots {
+            display: flex;
+            gap: 12px;
+        }
+
+        .testimonial-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background-color: var(--light-gray);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .testimonial-dot.active {
+            background-color: var(--primary);
+            transform: scale(1.2);
+        }
+
+        /* ===== Blog Section ===== */
+        .blog-section {
+            padding: 100px 0;
+            background-color: var(--light-gray);
+        }
+
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 32px;
+        }
+
+        .blog-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .blog-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
+        }
+
+        .blog-img {
+            height: 240px;
+            background-size: cover;
+            background-position: center;
+            transition: var(--transition);
+        }
+
+        .blog-card:hover .blog-img {
+            transform: scale(1.05);
+        }
+
+        .blog-content {
+            padding: 32px;
+        }
+
+        .blog-category {
+            display: inline-block;
+            font-size: 0.9rem;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .blog-title {
+            font-size: 1.5rem;
+            margin-bottom: 16px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .blog-excerpt {
+            color: var(--gray);
+            margin-bottom: 24px;
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        .read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--primary);
+        }
+
+        .read-more i {
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .blog-card:hover .read-more i {
+            transform: translateX(4px);
+        }
+
+        /* ===== Instagram Feed ===== */
+        .instagram-feed {
+            padding: 100px 0;
+            background-color: var(--light);
+        }
+        .instagram-feed h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.25rem;
+        }
+
+        .instagram-feed h2 span {
+            color: var(--primary);
+        }
+
+        .instagram-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 16px;
+        }
+
+        .instagram-post {
+            position: relative;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            aspect-ratio: 1/1;
+        }
+
+        .instagram-post img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .instagram-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: var(--transition);
+            color: white;
+            font-size: 1.8rem;
+        }
+
+        .instagram-post:hover .instagram-overlay {
+            opacity: 1;
+        }
+
+        .instagram-post:hover img {
+            transform: scale(1.1);
+        }
+
+        /* ===== Newsletter ===== */
+        .newsletter-section {
+            padding: 80px 0;
+            background-color: var(--dark);
+            color: white;
+            text-align: center;
+        }
+
+        .newsletter-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .newsletter-section p {
+            max-width: 600px;
+            margin: 0 auto 36px;
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .newsletter-form {
+            display: flex;
+            max-width: 500px;
+            margin: 0 auto 36px;
+        }
+
+        .newsletter-form input {
+            flex: 1;
+            padding: 16px 24px;
+            border-radius: var(--border-radius) 0 0 var(--border-radius);
+            border: none;
+            font-size: 1rem;
+        }
+
+        .newsletter-form input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+
+        .newsletter-form button {
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+        }
+
+        .newsletter-social {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+        }
+
+        .newsletter-social a {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+            font-size: 1.2rem;
+        }
+
+        .newsletter-social a:hover {
+            background-color: white;
+            color: var(--primary);
+            transform: translateY(-4px);
+        }
+
+        /* ===== Footer ===== */
+        .footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 80px 0 0;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 48px;
+            margin-bottom: 80px;
+        }
+
+        .footer-col h3 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.3rem;
+            margin-bottom: 24px;
+            position: relative;
+            padding-bottom: 12px;
+            color: white;
+        }
+
+        .footer-col h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 48px;
+            height: 3px;
+            background-color: var(--primary);
+        }
+
+        .footer-about .logo {
+            font-size: 2rem;
+            margin-bottom: 24px;
+            display: inline-flex;
+        }
+
+        .footer-about p {
+            opacity: 0.8;
+            margin-bottom: 24px;
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        .footer-payment {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .footer-payment img {
+            height: 28px;
+            width: auto;
+            border-radius: 4px;
+            background-color: white;
+            padding: 4px;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 16px;
+        }
+
+        .footer-col ul a {
+            opacity: 0.8;
+            font-size: 1rem;
+            transition: var(--transition);
+            display: inline-block;
+        }
+
+        .footer-col ul a:hover {
+            opacity: 1;
+            color: var(--primary);
+            transform: translateX(6px);
+        }
+
+        .footer-contact li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            font-size: 1rem;
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        .footer-contact i {
+            color: var(--primary);
+            width: 24px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .footer-hours {
+            margin-top: 32px;
+        }
+
+        .footer-hours h4 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            color: white;
+        }
+
+        .footer-hours p {
+            font-size: 0.95rem;
+            opacity: 0.8;
+            margin-bottom: 8px;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 24px 0;
+        }
+
+        .footer-bottom .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .footer-copyright {
+            font-size: 0.95rem;
+            opacity: 0.7;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 24px;
+        }
+
+        .footer-links a {
+            font-size: 0.95rem;
+            opacity: 0.7;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+            color: var(--primary);
+        }
+
+        /* ===== Responsive Styles ===== */
+        @media (max-width: 1200px) {
+            .hero-content h1 {
+                font-size: 3.25rem;
+            }
+            
+            .subscription-banner .container {
+                gap: 40px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .main-nav {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero-content h1 {
+                font-size: 2.75rem;
+            }
+            
+            .hero-content p {
+                max-width: 100%;
+            }
+            
+            .subscription-banner .container {
+                flex-direction: column;
+            }
+            
+            .subscription-content {
+                max-width: 100%;
+                text-align: center;
+            }
+            
+            .subscription-form {
+                margin: 0 auto 36px;
+            }
+            
+            .subscription-benefits {
+                justify-content: center;
+            }
+            
+            .subscription-image {
+                display: none;
+            }
+            
+            .testimonial-content {
+                padding: 40px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                height: 70vh;
+                min-height: 600px;
+            }
+            
+            .hero-content {
+                padding-top: 120px;
+            }
+            
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero-content p {
+                font-size: 1.1rem;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+            
+            .product-tabs {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 24px;
+            }
+            
+            .blog-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero {
+                height: 60vh;
+                min-height: 500px;
+            }
+            
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .btn {
+                padding: 12px 20px;
+            }
+            
+            .categories-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+            
+            .product-img {
+                height: 180px;
+            }
+            
+            .product-info {
+                padding: 20px;
+            }
+            
+            .subscription-form {
+                flex-direction: column;
+            }
+            
+            .subscription-form button {
+                width: 100%;
+                border-radius: var(--border-radius);
+            }
+            
+            .subscription-form input {
+                border-radius: var(--border-radius);
+            }
+            
+            .testimonial-content {
+                padding: 30px 20px;
+            }
+            
+            .testimonial-text {
+                font-size: 1.1rem;
+            }
+            
+            .newsletter-form {
+                flex-direction: column;
+            }
+            
+            .newsletter-form button {
+                width: 100%;
+                border-radius: var(--border-radius);
+            }
+            
+            .newsletter-form input {
+                border-radius: var(--border-radius);
+                margin-bottom: 12px;
+            }
+            
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Preloader -->
+    <div class="preloader">
+        <div class="loader">
+            <div class="snack-loader">
+                <div class="chip"></div>
+                <div class="cookie"></div>
+                <div class="pretzel"></div>
+            </div>
+            <p>Loading JoanSnacks...</p>
+        </div>
+    </div>
+
+    <!-- Announcement Bar -->
+    <div class="announcement-bar">
+        <p>🎉 Free shipping on all orders over $75 | New summer flavors just launched!</p>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <span>Joan</span><span>Snacks</span>
+            </a>
+            
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="#">Shop All</a></li>
+                    <li><a href="#">Categories</a></li>
+                    <li><a href="#">New Arrivals</a></li>
+                    <li><a href="#">Gift Boxes</a></li>
+                    <li><a href="#">About Us</a></li>
+                </ul>
+            </nav>
+            <div class="header-right">
+                <div class="search-box">
+                    <input type="text" placeholder="Search snacks...">
+                    <button><i class="fas fa-search"></i></button>
+                </div>
+                <div class="header-icons">
+                    <a href="#"><i class="far fa-user"></i></a>
+                    <a href="#"><i class="far fa-heart"></i></a>
+                    <a href="#" class="cart-icon">
+                        <i class="fas fa-shopping-bag"></i>
+                        <span class="cart-count">2</span>
+                    </a>
+                </div>
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-slider">
+            <div class="slide active" style="background-image: url('https://images.unsplash.com/photo-1550583724-b2692b85b150?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80')">
+                <div class="container">
+                    <div class="hero-content">
+                        <span class="hero-subtitle">New Collection</span>
+                        <h1>Homemade snacks</h1>
+                        <p>Curated selection of premium snacks from around the world delivered to your door</p>
+                        <a href="#" class="btn btn-primary">Shop Now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1514517521153-1be72277b32f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80')">
+                <div class="container">
+                    <div class="hero-content">
+                        <span class="hero-subtitle">Limited Time</span>
+                        <h1>Summer Flavors</h1>
+                        <p>Exclusive tropical and citrus-infused snacks for the season</p>
+                        <a href="#" class="btn btn-primary">Explore</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-slider-controls">
+            <button class="prev-slide"><i class="fas fa-chevron-left"></i></button>
+            <div class="slide-dots">
+                <div class="slide-dot active"></div>
+                <div class="slide-dot"></div>
+            </div>
+            <button class="next-slide"><i class="fas fa-chevron-right"></i></button>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="categories-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Shop By Category</h2>
+                <a href="#" class="view-all">View All Categories <i class="fas fa-arrow-right"></i></a>
+            </div>
+            
+            <div class="categories-grid">
+                <a href="#" class="category-card">
+                    <div class="category-img" style="background-image: url('https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80')"></div>
+                    <h3>Chips & Crisps</h3>
+                </a>
+                <a href="#" class="category-card">
+                    <div class="category-img" style="background-image: url('https://images.unsplash.com/photo-1599490659213-e2b9527bd087?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=880&q=80')"></div>
+                    <h3>Chocolate</h3>
+                </a>
+                <a href="#" class="category-card">
+                    <div class="category-img" style="background-image: url('https://images.unsplash.com/photo-1611250503337-983e67677b6b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=765&q=80')"></div>
+                    <h3>Nuts & Seeds</h3>
+                </a>
+                <a href="#" class="category-card">
+                    <div class="category-img" style="background-image: url('https://images.unsplash.com/photo-1616634375264-2d2e17736a36?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80')"></div>
+                    <h3>Cookies</h3>
+                </a>
+                <a href="#" class="category-card">
+                    <div class="category-img" style="background-image: url('https://images.unsplash.com/photo-1615485737449-cd73e532a1d4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=735&q=80')"></div>
+                    <h3>Healthy Snacks</h3>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section class="featured-products">
+        <div class="container">
+            <div class="section-header">
+                <h2>Featured Products</h2>
+                <div class="product-tabs">
+                    <button class="tab-btn active">Trending</button>
+                    <button class="tab-btn">Bestsellers</button>
+                    <button class="tab-btn">New Arrivals</button>
+                </div>
+            </div>
+            
+            <div class="products-grid">
+                <!-- Product 1 -->
+                <div class="product-card">
+                    <div class="product-badge">New</div>
+                    <div class="product-img" style="background-image: url('https://images.unsplash.com/photo-1623655485291-1aa0a9877a3e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80')">
+                        <div class="product-actions">
+                            <button class="quick-view"><i class="far fa-eye"></i></button>
+                            <button class="add-to-wishlist"><i class="far fa-heart"></i></button>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Chips</span>
+                        <h3 class="product-title">Truffle Sea Salt Potato Chips</h3>
+                        <div class="product-rating">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <span>(128)</span>
+                        </div>
+                        <div class="product-price">
+                            <span class="current-price">$4.99</span>
+                            <span class="original-price">$6.99</span>
+                        </div>
+                        <button class="btn btn-primary btn-add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+                
+                <!-- Product 2 -->
+                <div class="product-card">
+                    <div class="product-badge hot">Hot</div>
+                    <div class="product-img" style="background-image: url('https://images.unsplash.com/photo-1571115177098-24ec42ed204d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80')">
+                        <div class="product-actions">
+                            <button class="quick-view"><i class="far fa-eye"></i></button>
+                            <button class="add-to-wishlist"><i class="far fa-heart"></i></button>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Chocolate</span>
+                        <h3 class="product-title">Dark Chocolate Almond Bark</h3>
+                        <div class="product-rating">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <span>(256)</span>
+                        </div>
+                        <div class="product-price">
+                            <span class="current-price">$8.49</span>
+                        </div>
+                        <button class="btn btn-primary btn-add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+                
+                <!-- Product 3 -->
+                <div class="product-card">
+                    <div class="product-img" style="background-image: url('https://images.unsplash.com/photo-1616634375264-2d2e17736a36?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80')">
+                        <div class="product-actions">
+                            <button class="quick-view"><i class="far fa-eye"></i></button>
+                            <button class="add-to-wishlist"><i class="far fa-heart"></i></button>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Cookies</span>
+                        <h3 class="product-title">Brown Butter Shortbread Cookies</h3>
+                        <div class="product-rating">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </div>
+                            <span>(84)</span>
+                        </div>
+                        <div class="product-price">
+                            <span class="current-price">$7.99</span>
+                            <span class="original-price">$9.99</span>
+                        </div>
+                        <button class="btn btn-primary btn-add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+                
+                <!-- Product 4 -->
+                <div class="product-card">
+                    <div class="product-badge sale">-25%</div>
+                    <div class="product-img" style="background-image: url('https://images.unsplash.com/photo-1611250503337-983e67677b6b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=765&q=80')">
+                        <div class="product-actions">
+                            <button class="quick-view"><i class="far fa-eye"></i></button>
+                            <button class="add-to-wishlist"><i class="far fa-heart"></i></button>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Nuts & Seeds</span>
+                        <h3 class="product-title">Honey Roasted Cashews</h3>
+                        <div class="product-rating">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <span>(192)</span>
+                        </div>
+                        <div class="product-price">
+                            <span class="current-price">$6.49</span>
+                            <span class="original-price">$8.99</span>
+                        </div>
+                        <button class="btn btn-primary btn-add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-footer">
+                <a href="#" class="btn btn-outline">View All Products</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Subscription Banner -->
+    <section class="subscription-banner">
+        <div class="container">
+            <div class="subscription-content">
+                <h2>Join Our Snack Club</h2>
+                <p>Get a curated box of premium snacks delivered monthly. Discover new flavors, enjoy exclusive products, and save with member discounts.</p>
+                <div class="subscription-form">
+                    <input type="email" placeholder="Enter your email">
+                    <button class="btn btn-primary">Subscribe</button>
+                </div>
+                <div class="subscription-benefits">
+                    <div class="benefit">
+                        <i class="fas fa-gift"></i>
+                        <span>Exclusive flavors</span>
+                    </div>
+                    <div class="benefit">
+                        <i class="fas fa-percentage"></i>
+                        <span>15% discount</span>
+                    </div>
+                    <div class="benefit">
+                        <i class="fas fa-shipping-fast"></i>
+                        <span>Free shipping</span>
+                    </div>
+                </div>
+            </div>
+            <div class="subscription-image">
+                <img src="https://images.unsplash.com/photo-1540910419892-4a36d2c3266c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Snack subscription box">
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>What Our Customers Say</h2>
+            </div>
+            
+            <div class="testimonials-slider">
+                <div class="testimonial active">
+                    <div class="testimonial-content">
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p class="testimonial-text">"The truffle chips are absolutely addictive! I've already placed three orders this month. The packaging is beautiful and the delivery was super fast. CrunchDelight has become my go-to for unique snack discoveries."</p>
+                        <div class="testimonial-author">
+                            <div class="author-img" style="background-image: url('https://randomuser.me/api/portraits/women/43.jpg')"></div>
+                            <div class="author-info">
+                                <h4>Sarah Johnson</h4>
+                                <span>Verified Buyer</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial">
+                    <div class="testimonial-content">
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p class="testimonial-text">"I subscribed to the monthly snack box and it's been the highlight of my month! Discovering new snacks from around the world is so much fun. The quality is consistently excellent and the variety keeps me excited for each delivery."</p>
+                        <div class="testimonial-author">
+                            <div class="author-img" style="background-image: url('https://randomuser.me/api/portraits/men/32.jpg')"></div>
+                            <div class="author-info">
+                                <h4>Michael Chen</h4>
+                                <span>Snack Club Member</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonials-controls">
+                <button class="prev-testimonial"><i class="fas fa-chevron-left"></i></button>
+                <div class="testimonial-dots">
+                    <div class="testimonial-dot active"></div>
+                    <div class="testimonial-dot"></div>
+                </div>
+                <button class="next-testimonial"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Section -->
+    <section class="blog-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>From The Blog</h2>
+                <a href="#" class="view-all">View All Posts <i class="fas fa-arrow-right"></i></a>
+            </div>
+            
+            <div class="blog-grid">
+                <article class="blog-card">
+                    <div class="blog-img" style="background-image: url('https://images.unsplash.com/photo-1490645935967-10de6ba17061?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1469&q=80')"></div>
+                    <div class="blog-content">
+                        <span class="blog-category">Snack Trends</span>
+                        <h3 class="blog-title">The Rise of Artisan Snack Makers in 2023</h3>
+                        <p class="blog-excerpt">Discover how small-batch producers are revolutionizing the snack industry with innovative flavors and sustainable practices that challenge big food corporations.</p>
+                        <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </article>
+                
+                <article class="blog-card">
+                    <div class="blog-img" style="background-image: url('https://images.unsplash.com/photo-1514517521153-1be72277b32f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80')"></div>
+                    <div class="blog-content">
+                        <span class="blog-category">Flavor Guide</span>
+                        <h3 class="blog-title">Pairing Summer Drinks with Your Favorite Snacks</h3>
+                        <p class="blog-excerpt">From iced teas to craft cocktails, we've got the perfect snack pairings for your summer beverages that will elevate your tasting experience.</p>
+                        <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </article>
+                
+                <article class="blog-card">
+                    <div class="blog-img" style="background-image: url('https://images.unsplash.com/photo-1615485737449-cd73e532a1d4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=735&q=80')"></div>
+                    <div class="blog-content">
+                        <span class="blog-category">Healthy Living</span>
+                        <h3 class="blog-title">5 Nutritious Snacks That Actually Satisfy</h3>
+                        <p class="blog-excerpt">Healthy doesn't have to mean boring. These nutrient-packed snacks deliver on both flavor and satisfaction while keeping your wellness goals on track.</p>
+                        <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- Instagram Feed -->
+    <section class="instagram-feed">
+        <div class="container">
+            <div class="section-header">
+                <h2>Follow Us <span>@CrunchDelight</span></h2>
+                <a href="#" class="view-all">View on Instagram <i class="fas fa-arrow-right"></i></a>
+            </div>
+            
+            <div class="instagram-grid">
+                <a href="#" class="instagram-post">
+                    <img src="https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="Instagram post">
+                    <div class="instagram-overlay">
+                        <i class="fab fa-instagram"></i>
+                    </div>
+                </a>
+                <a href="#" class="instagram-post">
+                    <img src="https://images.unsplash.com/photo-1599490659213-e2b9527bd087?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=880&q=80" alt="Instagram post">
+                    <div class="instagram-overlay">
+                        <i class="fab fa-instagram"></i>
+                    </div>
+                </a>
+                <a href="#" class="instagram-post">
+                    <img src="https://images.unsplash.com/photo-1623655485291-1aa0a9877a3e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="Instagram post">
+                    <div class="instagram-overlay">
+                        <i class="fab fa-instagram"></i>
+                    </div>
+                </a>
+                <a href="#" class="instagram-post">
+                    <img src="https://images.unsplash.com/photo-1571115177098-24ec42ed204d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="Instagram post">
+                    <div class="instagram-overlay">
+                        <i class="fab fa-instagram"></i>
+                    </div>
+                </a>
+                <a href="#" class="instagram-post">
+                    <img src="https://images.unsplash.com/photo-1616634375264-2d2e17736a36?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="Instagram post">
+                    <div class="instagram-overlay">
+                        <i class="fab fa-instagram"></i>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="newsletter-section">
+        <div class="container">
+            <div class="newsletter-content">
+                <h2>Stay Updated</h2>
+                <p>Subscribe to our newsletter for exclusive offers, new product announcements, and snack news.</p>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Your email address">
+                    <button type="submit" class="btn btn-primary">Subscribe</button>
+                </form>
+                <div class="newsletter-social">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-pinterest-p"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col footer-about">
+                    <a href="index.html" class="logo">
+                        <span>Crunch</span><span>Delight</span>
+                    </a>
+                    <p>Curating the world's finest snacks since 2018. We're passionate about discovering exceptional flavors and sharing them with snack enthusiasts everywhere.</p>
+                    <div class="footer-payment">
+                        <img src="https://via.placeholder.com/40x25/FFFFFF/767676?text=VISA" alt="Visa">
+                        <img src="https://via.placeholder.com/40x25/FFFFFF/767676?text=MC" alt="Mastercard">
+                        <img src="https://via.placeholder.com/40x25/FFFFFF/767676?text=AMEX" alt="Amex">
+                        <img src="https://via.placeholder.com/40x25/FFFFFF/767676?text=PP" alt="PayPal">
+                        <img src="https://via.placeholder.com/40x25/FFFFFF/767676?text=AP" alt="Apple Pay">
+                    </div>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>Shop</h3>
+                    <ul>
+                        <li><a href="#">All Products</a></li>
+                        <li><a href="#">New Arrivals</a></li>
+                        <li><a href="#">Best Sellers</a></li>
+                        <li><a href="#">Special Offers</a></li>
+                        <li><a href="#">Gift Cards</a></li>
+                        <li><a href="#">Subscription Boxes</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>Information</h3>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Shipping Policy</a></li>
+                        <li><a href="#">Return Policy</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col footer-contact">
+                    <h3>Contact Us</h3>
+                    <ul>
+                        <li><i class="fas fa-map-marker-alt"></i> 123 Snack Street, Foodville, CA 90210</li>
+                        <li><i class="fas fa-phone-alt"></i> (800) 555-SNACK</li>
+                        <li><i class="fas fa-envelope"></i> hello@crunchdelight.com</li>
+                    </ul>
+                    <div class="footer-hours">
+                        <h4>Customer Service Hours</h4>
+                        <p>Monday-Friday: 9am-6pm EST</p>
+                        <p>Saturday: 10am-4pm EST</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div class="footer-copyright">
+                    <p>&copy; 2023 CrunchDelight. All rights reserved.</p>
+                </div>
+                <div class="footer-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Accessibility</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Preloader
+            const preloader = document.querySelector('.preloader');
+            
+            setTimeout(() => {
+                preloader.classList.add('fade-out');
+                setTimeout(() => {
+                    preloader.style.display = 'none';
+                }, 500);
+            }, 1500);
+            
+            // Hero Slider
+            const slides = document.querySelectorAll('.hero-slider .slide');
+            const dots = document.querySelectorAll('.slide-dot');
+            let currentSlide = 0;
+            
+            function goToSlide(index) {
+                slides[currentSlide].classList.remove('active');
+                dots[currentSlide].classList.remove('active');
+                currentSlide = (index + slides.length) % slides.length;
+                slides[currentSlide].classList.add('active');
+                dots[currentSlide].classList.add('active');
+            }
+            
+            document.querySelector('.prev-slide').addEventListener('click', () => {
+                goToSlide(currentSlide - 1);
+            });
+            
+            document.querySelector('.next-slide').addEventListener('click', () => {
+                goToSlide(currentSlide + 1);
+            });
+            
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    goToSlide(index);
+                });
+            });
+            
+            // Auto slide
+            let slideInterval = setInterval(() => {
+                goToSlide(currentSlide + 1);
+            }, 5000);
+            
+            document.querySelector('.hero-slider').addEventListener('mouseenter', () => {
+                clearInterval(slideInterval);
+            });
+            
+            document.querySelector('.hero-slider').addEventListener('mouseleave', () => {
+                slideInterval = setInterval(() => {
+                    goToSlide(currentSlide + 1);
+                }, 5000);
+            });
+            
+            // Testimonials Slider
+            const testimonials = document.querySelectorAll('.testimonial');
+            const testimonialDots = document.querySelectorAll('.testimonial-dot');
+            let currentTestimonial = 0;
+            
+            function goToTestimonial(index) {
+                testimonials[currentTestimonial].classList.remove('active');
+                testimonialDots[currentTestimonial].classList.remove('active');
+                currentTestimonial = (index + testimonials.length) % testimonials.length;
+                testimonials[currentTestimonial].classList.add('active');
+                testimonialDots[currentTestimonial].classList.add('active');
+            }
+            
+            document.querySelector('.prev-testimonial').addEventListener('click', () => {
+                goToTestimonial(currentTestimonial - 1);
+            });
+            
+            document.querySelector('.next-testimonial').addEventListener('click', () => {
+                goToTestimonial(currentTestimonial + 1);
+            });
+            
+            testimonialDots.forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    goToTestimonial(index);
+                });
+            });
+            
+            // Auto testimonial
+            let testimonialInterval = setInterval(() => {
+                goToTestimonial(currentTestimonial + 1);
+            }, 7000);
+            
+            document.querySelector('.testimonials-section').addEventListener('mouseenter', () => {
+                clearInterval(testimonialInterval);
+            });
+            
+            document.querySelector('.testimonials-section').addEventListener('mouseleave', () => {
+                testimonialInterval = setInterval(() => {
+                    goToTestimonial(currentTestimonial + 1);
+                }, 7000);
+            });
+            
+            // Product Tabs
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                });
+            });
+            
+            // Add to cart buttons
+            const addToCartBtns = document.querySelectorAll('.btn-add-to-cart');
+            
+            addToCartBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const productCard = btn.closest('.product-card');
+                    const productTitle = productCard.querySelector('.product-title').textContent;
+                    
+                    // Show notification
+                    const notification = document.createElement('div');
+                    notification.classList.add('notification');
+                    notification.innerHTML = `
+                        <i class="fas fa-check-circle"></i>
+                        <span>${productTitle} added to cart</span>
+                    `;
+                    document.body.appendChild(notification);
+                    
+                    setTimeout(() => {
+                        notification.classList.add('show');
+                    }, 10);
+                    
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                        setTimeout(() => {
+                            notification.remove();
+                        }, 300);
+                    }, 3000);
+                    
+                    // Update cart count
+                    const cartCount = document.querySelector('.cart-count');
+                    if (cartCount) {
+                        const currentCount = parseInt(cartCount.textContent);
+                        cartCount.textContent = currentCount + 1;
+                    }
+                });
+            });
+            
+            // Mobile menu toggle
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const mobileMenu = document.createElement('div');
+            mobileMenu.className = 'mobile-menu';
+            mobileMenu.innerHTML = `
+                <div class="mobile-menu-header">
+                    <button class="close-mobile-menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#">Shop All</a></li>
+                        <li><a href="#">Categories</a></li>
+                        <li><a href="#">New Arrivals</a></li>
+                        <li><a href="#">Gift Boxes</a></li>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Account</a></li>
+                        <li><a href="#">Wishlist</a></li>
+                    </ul>
+                </nav>
+            `;
+            document.body.appendChild(mobileMenu);
+            
+            const mobileMenuOverlay = document.createElement('div');
+            mobileMenuOverlay.className = 'mobile-menu-overlay';
+            document.body.appendChild(mobileMenuOverlay);
+            
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.add('active');
+                mobileMenuOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+            
+            mobileMenu.querySelector('.close-mobile-menu').addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                mobileMenuOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+            
+            mobileMenuOverlay.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                mobileMenuOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+            
+            // Notification styles
+            const notificationStyles = document.createElement('style');
+            notificationStyles.textContent = `
+                .notification {
+                    position: fixed;
+                    bottom: 24px;
+                    left: 50%;
+                    transform: translateX(-50%) translateY(100px);
+                    background-color: var(--dark);
+                    color: white;
+                    padding: 16px 28px;
+                    border-radius: var(--border-radius);
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    box-shadow: var(--box-shadow);
+                    z-index: 1000;
+                    opacity: 0;
+                    transition: all 0.3s ease;
+                }
+                
+                .notification.show {
+                    transform: translateX(-50%) translateY(0);
+                    opacity: 1;
+                }
+                
+                .notification i {
+                    color: var(--secondary);
+                    font-size: 1.4rem;
+                }
+            `;
+            document.head.appendChild(notificationStyles);
+        });
+    </script>
+</body>
+</html>
